@@ -3,6 +3,7 @@
 ​	**State** é o projeto de uma interface de desenvolvimento que fornece uma série de objetos 'pré-cozidos' pensados para a criação de experiências interativas na Web, como jogos, de forma intuitiva e fácil de aprender.
 
 
+
 ## Os pilares do projeto
 
 Visando um padrão claro de progresso da engine, o projeto assume alguns pilares no seu desenvolvimento. São eles:
@@ -12,14 +13,18 @@ Visando um padrão claro de progresso da engine, o projeto assume alguns pilares
 3. **Compreensibilidade:** Objetos e configurações devem ter funcionalidades claras e compreensíveis, bem definidos na hora de sua utilização.
 
 
+
+***Trabalho em progresso. * ** 👷‍♂️
+
 <!--
+
 # Documentação
 
 Documentação referente à biblioteca de uma engine para programação de jogos e outras experiências virtuais. O código-fonte deste programa programa é escrito utilizando apenas **JavaScript puro**, disponível nas distribuições ECMAScript até o modelo ES6, especificamente para navegadores Web.
 
 
 
-***Trabalho em progresso. * ** 👷‍♂️
+
 
 ## Diretórios
 
