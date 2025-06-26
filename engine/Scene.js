@@ -12,7 +12,8 @@ export default class Scene
         /** Conjunto de entidades/objetos presentes no jogo ou em determinada cena. */
         this.entities = [];
 
-        this.tilemap = [];
+        /** Tile Maps da cena. */
+        this.tilemaps = [];
     }
 
     /** Adiciona uma entidade de objeto simples ao conjunto de elementos do jogo. */
