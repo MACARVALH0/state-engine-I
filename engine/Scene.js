@@ -9,10 +9,19 @@ export default class Scene
      */
     constructor(CANVAS_W, CANVAS_H, ctx)
     {
+        this.canvas_w = CANVAS_W;
+        this.canvas_h = CANVAS_H;
+        this.ctx = ctx;
+
         /** Conjunto de entidades/objetos presentes no jogo ou em determinada cena. */
         this.entities = [];
 
+        /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. */
         this.tilemap = [];
+
+
+
+        this.setup();
     }
 
     /** Adiciona uma entidade de objeto simples ao conjunto de elementos do jogo. */
@@ -45,6 +54,11 @@ export default class Scene
 
     }
 
+
+    initialSetup()
+    {
+        this.tilemap.push(new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {}));
+    }
 
     update(delta){}
 
