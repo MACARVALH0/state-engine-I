@@ -6,9 +6,9 @@ export default class TileMapLayer
     /**
      * Construtor da classe `TileMapLayer`.
      * 
-     * @param {*} width Largura do `TileMapLayer`.
-     * @param {*} height Altura `TileMapLayer`.
-     * @param {*} tileset Instância de objeto `ImageData` do atlas/tileset de sprites.
+     * @param {Number} width Largura do `TileMapLayer`.
+     * @param {Number} height Altura `TileMapLayer`.
+     * @param {ImageData} tileset Instância de objeto `ImageData` do atlas/tileset de sprites.
      * @param  {...any} options Conjunto de configurações opcionais na construção do `TileMapLayer`.
      */
     constructor(width, height, tileset, ...options)
@@ -47,7 +47,6 @@ export default class TileMapLayer
 
         /** Garante que a proporção entre os tiles seja mantida nas funções que alteram seus tamanhos.  */
         this.keep_tile_size_ratio = true;
-
 
 
         /** Matriz de tiles do objeto `TileMapLayer`. */
