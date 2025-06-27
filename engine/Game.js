@@ -32,17 +32,21 @@ export default class Game
     /**
      * Cria uma nova cena.
      * 
-     * @param {Number} width Valor de largura customizada para a nova cena. Caso não esteja presente, assume a largura do canvas.
-     * @param {Number} height Valor de altura customizada para a nova cena. Caso não esteja presente, assume a altura do canvas.
+     * @param {Number} width Opcional. Valor de largura customizada para a nova cena. Caso não esteja presente, assume a largura do canvas.
+     * @param {Number} height Opcional. Valor de altura customizada para a nova cena. Caso não esteja presente, assume a altura do canvas.
      */
     createScene(width, height)
     {
-        this.sceneManager.push(new Scene
-            (
-                width ?? this.canvas_width,
-                height ?? this.canvas_height,
-                this.ctx
-            ));
+        const scene = new Scene
+        (
+            width ?? this.canvas_width,
+            height ?? this.canvas_height,
+            this.ctx
+        );
+
+        this.sceneManager.push(scene);
+
+        return scene;
     }
 
     loop()
