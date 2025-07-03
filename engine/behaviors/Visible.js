@@ -5,6 +5,7 @@
  */
 const Visible = Base => class extends Base
 {
+    // TODO Documentar este trecho.
     /**
      * 
      * @param  {...any} config 
@@ -13,6 +14,8 @@ const Visible = Base => class extends Base
     {
         super(...config);
         console.log("- Visible");
+
+        this.is_visible = true;
 
         this.sprites = config[1].sprites ?? {};
     }

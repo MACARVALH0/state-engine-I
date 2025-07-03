@@ -1,4 +1,6 @@
+// import Publisher     from './Observer/Publisher.js';
 import TileMapLayer from './TileMapLayer.js';
+import EventManager from './Observer/EventManager.js';
 
 export default class Scene
 {
@@ -9,6 +11,8 @@ export default class Scene
      */
     constructor(CANVAS_W, CANVAS_H, ctx)
     {
+        // TODO Documentar atributos.
+
         this.canvas_w = CANVAS_W;
         this.canvas_h = CANVAS_H;
         this.ctx = ctx;
@@ -16,13 +20,16 @@ export default class Scene
         /** Conjunto de entidades/objetos presentes no jogo ou em determinada cena. */
         this.entities = [];
 
-        /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. */
-        this.tilemap = [];
+        /** Conjunto de objetos visíveis na cena. */
+        this.visible = [];
 
+        /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
+        this.tilemap = [new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {})];
 
-
-        this.setup();
+        this.eventManager = new EventManager();
     }
+
+
 
     /** Adiciona uma entidade de objeto simples ao conjunto de elementos do jogo. */
     addSimpleEntity(entity){ this.entities.push(entity); }
@@ -37,6 +44,8 @@ export default class Scene
     {
         try
         {
+            // TODO Check if object has "Visible" attribute (if possible) and add it to a specific array of entities to be rendered.
+
             const entity = new Composition(name, config); // Cria um objeto com a composição fornecida.
 
             entity.runInitialRoutine(); // Executa a rotina inicial de um objeto composto e verifica se ele está adequado.
@@ -54,12 +63,7 @@ export default class Scene
 
     }
 
-
-    initialSetup()
-    {
-        this.tilemap.push(new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {}));
-    }
-
+    
     update(delta){}
 
     render(){}

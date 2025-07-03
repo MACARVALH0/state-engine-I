@@ -15,7 +15,6 @@ export default class SceneManager
      */
     push(scene)
     {
-        // this.stack.push(scene);
         this.stack.at(-1)?.pause?.();
         this.stack.push(scene);
     }

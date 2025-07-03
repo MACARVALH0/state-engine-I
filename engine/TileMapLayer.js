@@ -33,6 +33,9 @@ export default class TileMapLayer
         /** Altura de um tile. O programa pode assumir o valor 64 como padrão. */
         this.tile_h = options['tile_h'] ? Math.abs(options['tile_h']) : 64;
 
+        /** Garante que a proporção entre os tiles seja mantida nas funções que alteram seus tamanhos.  */
+        this.keep_tile_size_ratio = true;
+
 
         /** Número de colunas de tiles no `TileMapLayer`. */
         this.cols = options['cols'] // Verifica se `cols` foi definido nas opções passadas como argumento para o construtor (caso existam).
@@ -45,19 +48,33 @@ export default class TileMapLayer
             : Math.ceil(this.height/this.tile_h);
 
 
-        /** Garante que a proporção entre os tiles seja mantida nas funções que alteram seus tamanhos.  */
-        this.keep_tile_size_ratio = true;
-
-
         /** Matriz de tiles do objeto `TileMapLayer`. */
-        this.tiles = this.setupTiles();
+        this.visualGrid = this.setupVisualGrid();
 
         /** Instância de TileSet do mapa. */
         this.tileset = new TileSet(tileset ?? new ImageData(), this.tile_w, this.keep_tile_size_ratio ? this.tile_w : this.tile_h);
     }
 
+    /**
+     * Define o arquivo fonte do TileSet do mapa.
+     * 
+     * @param {Object} tileset_src Caminho para o arquivo fonte do atlas do TileSet.
+     */
+    setTileSet(tileset_src)
+    {
+        try
+        {
+            this.tileset.atlas.src = tileset_src; // Define o arquivo de fonte do atlas do tileset.
+            this.tileset.tileset_config = {}; // Reinicia a definição de valores dos tiles.
+        }
 
-    setupTiles()
+        catch(e){ throw new Error(`Não foi possível definir o caminho \'${tileset_src}\' como fonte para o tileset.`); }
+    }
+
+
+     
+    /** Cria uma matriz de tiles de duas dimensões com a quantidade de linhas e colunas da instância do `TileMapLayer`. */
+    setupVisualGrid()
     {
         const tiles = [];
 
@@ -70,44 +87,7 @@ export default class TileMapLayer
         return tiles;
     }
 
-    // TODO concluir função que define o tileset do mapa.
-    setTileSet(tileset_src)
-    {
-        try
-        {
-            this.tileset.src = tileset_src;
 
-        }
-
-        catch(e){}
-    }
 
     getTile(row, col){ return this.tiles[row][col]; }
-
-
-    
-
-    // constructor(...config)
-    // {
-    //     this.origin_x = config["origin_x"] ?? 0;
-    //     this.origin_y = config["origin_y"] ?? 0;
-
-    //     this.rows = undefined;
-    //     this.cols = undefined;
-
-    //     this.tile_width = config["size"] ?? 0;
-    //     this.tile_height = config["size"] ?? 0;
-
-    //     this.map = [];
-
-    //     this.tilesets = [];
-
-    //     this.tiles = [];
-    // }
-
-    // setupTileSet(){}
-
-    // getTile(){}
-
-    // buildMap(){}
 }

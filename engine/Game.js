@@ -1,6 +1,8 @@
 import SceneManager from "./SceneManager.js";
 import Scene        from "./Scene.js";
+// import Publisher    from "./Observer/Publisher.js";
 
+// TODO Documentar classe.
 export default class Game
 {
     constructor(canvas_html_obj)
@@ -37,6 +39,10 @@ export default class Game
      */
     createScene(width, height)
     {
+        const MAX_SCENE_NUMBER = 16;
+        if(this.sceneManager.stack.length > MAX_SCENE_NUMBER) throw new Error("O número máximo de cenas foi excedido.");
+
+        // Define a instância de `Scene` com as informações providenciadas.
         const scene = new Scene
         (
             width ?? this.canvas_width,
@@ -44,10 +50,13 @@ export default class Game
             this.ctx
         );
 
-        this.sceneManager.push(scene);
+        scene.subscribe(this); // `Game` se torna um observer da instância de `Scene`.
 
-        return scene;
+        this.sceneManager.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
+
+        return scene; // Retorna a instância de `Scene` criada.
     }
+
 
     loop()
     {
@@ -69,7 +78,7 @@ export default class Game
             // ROTINA PRINCIPAL //
 
             this.update(delta);
-            this.render(this.ctx);
+
             // // // // // // //
 
             this.loop_id = requestAnimationFrame(gameLoop); // Invoca a próxima execução de gameLoop.
@@ -79,12 +88,21 @@ export default class Game
     }
 
 
+    /** Método para descrever atualização com base no atributo de Observer. */
+    handleSceneEvent()
+    {
+        
+    }
+
+    handleSceneCreation()
+    {
+        
+    }
+
     update(delta)
     {
         this.sceneManager.update(delta);
     }
 
-    render()
-    {
-    }
+
 }
