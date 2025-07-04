@@ -1,5 +1,6 @@
 import SceneManager from "./SceneManager.js";
 import Scene        from "./Scene.js";
+import vkey         from "./virtualKeyboardSetup.js";
 // import Publisher    from "./Observer/Publisher.js";
 
 // TODO Documentar classe.
@@ -27,8 +28,10 @@ export default class Game
         /** Gerenciador de cenas do jogo. */
         this.sceneManager = new SceneManager();
 
-        /** ID da animação. */
+        /** ID do laço de execuçãos. */
         this.loop_id = undefined;
+
+        this.keyboard_control;
     }
 
     /**
@@ -89,20 +92,25 @@ export default class Game
 
 
     /** Método para descrever atualização com base no atributo de Observer. */
-    handleSceneEvent()
-    {
+    // handleSceneEvent()
+    // {
         
-    }
+    // }
 
-    handleSceneCreation()
-    {
+    // handleSceneCreation()
+    // {
         
-    }
+    // }
 
     update(delta)
     {
         this.sceneManager.update(delta);
     }
 
-
+    
+    setupKeyboard()
+    {
+        if(this.keyboard_control) return;
+        this.keyboard_control = Object.entries(controls).vkey.map( ([key, _code_string]) =>{ return [key, false]; } )
+    }
 }

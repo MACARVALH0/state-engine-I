@@ -1,9 +1,9 @@
 const controls = 
 {
-    up: {code: "ArrowUp", active: false},
-    down: {code: "ArrowDown", active: false},
-    left: {code: "ArrowLeft", active: false},
-    right: {code: "ArrowRight", active: false},
+    up: "ArrowUp",
+    down: "ArrowDown",
+    left: "ArrowLeft",
+    right: "ArrowRight",
 
     q: "KeyQ",
     w: "KeyW",
@@ -73,8 +73,6 @@ const vkey = new Proxy( controls,
     set(){ throw new Error("Não é permitido alterar a configuração dos controles predefinidos."); },
 
     deleteProperty(){ throw new Error("Não é permitido deletar propriedades dos controles predefinidos."); }
-}
-)
-
+});
 
 export default vkey;
