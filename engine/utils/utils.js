@@ -29,6 +29,14 @@ export function compose(Base, ...mixins)
 	return Composed;
 }
 
+
+export function createGame()
+{
+	
+}
+
+
+/** Deprecated. */
 export function getCanvas(el)
 {
 	const width = el.width;
