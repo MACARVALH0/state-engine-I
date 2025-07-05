@@ -3,6 +3,10 @@ import Scene        from "./Scene.js";
 import vkey         from "./virtualKeyboardSetup.js";
 // import Publisher    from "./Observer/Publisher.js";
 
+
+
+
+
 // TODO Documentar classe.
 export default class Game
 {
@@ -53,7 +57,8 @@ export default class Game
             this.ctx
         );
 
-        scene.subscribe(this); // `Game` se torna um observer da instância de `Scene`.
+        scene.eventManager.subscribe("create", this.sceneCreated); // `Game` se torna um observer de eventos da instância de `Scene`.
+        scene.eventManager.subscribe("delete", this.sceneDeleted);
 
         this.sceneManager.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
 

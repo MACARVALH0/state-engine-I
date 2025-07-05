@@ -63,6 +63,10 @@ export default class Scene
 
     }
 
+    onCreation()
+    {
+        
+    }
     
     update(delta){}
 
