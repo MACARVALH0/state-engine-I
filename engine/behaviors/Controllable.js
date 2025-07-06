@@ -10,6 +10,8 @@ const Controllable = Base => class extends Base
         super(...config);
         console.log("- Controllable.");
 
+        this.is_contrlb = true;
+
         this.key_set = config[1].key_set ?? {};
     }
 }
