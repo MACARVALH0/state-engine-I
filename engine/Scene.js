@@ -30,7 +30,6 @@ export default class Scene
     }
 
 
-
     /** Adiciona uma entidade de objeto simples ao conjunto de elementos do jogo. */
     addSimpleEntity(entity){ this.entities.push(entity); }
 
@@ -63,10 +62,6 @@ export default class Scene
 
     }
 
-    onCreation()
-    {
-        
-    }
     
     update(delta){}
 
