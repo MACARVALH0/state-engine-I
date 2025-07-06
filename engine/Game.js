@@ -2,6 +2,7 @@ import SceneManager from "./SceneManager.js";
 import Scene        from "./Scene.js";
 import vkey         from "./virtualKeyboardSetup.js";
 // import Publisher    from "./Observer/Publisher.js";
+import EventManager from "./Observer/EventManager.js";
 
 
 
@@ -35,7 +36,8 @@ export default class Game
         /** ID do laço de execuçãos. */
         this.loop_id = undefined;
 
-        this.keyboard_control;
+
+        this.eventManager = new EventManager();
     }
 
     /**
@@ -57,8 +59,7 @@ export default class Game
             this.ctx
         );
 
-        scene.eventManager.subscribe("create", this.sceneCreated); // `Game` se torna um observer de eventos da instância de `Scene`.
-        scene.eventManager.subscribe("delete", this.sceneDeleted);
+        scene.eventManager.subscribe(this, "keyboard_req"); // `Game` se torna um observer de eventos da instância de `Scene`.
 
         this.sceneManager.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
 
