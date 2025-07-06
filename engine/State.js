@@ -28,11 +28,12 @@ class State
             /// Eventos do teclado ouvidos pelo game_obj.
             this.keyboard.eventManager.subscribe(game_obj, "key_down", "key_up", "key_pressed");
 
+            /// Eventos de `Game` ouvidos por `State`.
+            game_obj.eventManager.subscribe(this, "scene_created");
 
-        } catch (err)
-        {
             
-        }
+        } catch (err)
+        { throw new Error(`Houve um problema na criação do objeto \`Game\`.\nMotivo:\n${err}`); }
 
         return this.game; 
     }
