@@ -20,7 +20,7 @@ export default class Scene
         /** Conjunto de entidades/objetos presentes no jogo ou em determinada cena. */
         this.entities = [];
 
-        /** Conjunto de objetos visíveis na cena. */
+        /** Conjunto de objetos visíveis na cena. Serve para facilitar alguns processos que só devem ocorrer com elementos visíveis na tela. */
         this.visible = [];
 
         /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
@@ -45,13 +45,23 @@ export default class Scene
         {
             // TODO Check if object has "Visible" attribute (if possible) and add it to a specific array of entities to be rendered.
 
-            const entity = new Composition(name, config); // Cria um objeto com a composição fornecida.
+            // Cria um objeto com a composição fornecida.
+            const entity = new Composition(name, config);
 
-            entity.runInitialRoutine(); // Executa a rotina inicial de um objeto composto e verifica se ele está adequado.
+            // Executa a rotina inicial de um objeto composto e verifica se ele está adequado.
+            entity.runInitialRoutine();
 
-            this.entities.push(entity); // Adiciona ao conjunto de entidades no objeto do jogo.
+            // Notifica a instância de `Game` de que foi criada uma entidade com os atributos de `Controllable`. 
+            if(entity.is_contrlb){this.eventManager.notify("keyboard_req", {})};
 
-            return entity; // Retorna uma referência para o objeto adicionado à cena.
+            // Adiciona ao conjunto de entidades no objeto do jogo.
+            this.entities.push(entity);
+
+            // Checa se objeto é visível e, em caso positivo, adiciona à array `visible`.
+            this.visible.push(entity);
+
+            // Retorna uma referência para o objeto adicionado à cena.
+            return entity;
         }
 
         catch(err)
