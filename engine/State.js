@@ -10,8 +10,19 @@ class State
 
         this.game;
         this.sound;
+
+        /** Mapa no modelo {tipo_de_evento, handler} */
+        this.handlers = new Map
+        ([
+            ["scene_created", (e)=>{}], // Handler para requisição de teclado a partir da última instância de `Scene`.
+            ["scene_deleted", (e)=>{}]
+        ]);
     }
 
+    // TODO Talvez, definir uma classe `MasterHandler` (ou algo assim), que leva em si o método de redirecionamento.
+    /** Função responsável por redirecionar cada tipo de notificação de evento disparada ao seu handler específico. */
+    handleEvent(event_type, data)
+    { if(this.handlers?.has(event_type)){ this.handlers.get(event_type)(data); } else { throw new Error(`O handler para eventos do tipo ${event_type} não existe.`); } }
 
 
     /**
@@ -29,7 +40,7 @@ class State
             this.keyboard.eventManager.subscribe(game_obj, "key_down", "key_up", "key_pressed");
 
             /// Eventos de `Game` ouvidos por `State`.
-            game_obj.eventManager.subscribe(this, "scene_created");
+            // game_obj.eventManager.subscribe(this, "scene_created");
 
             
         } catch (err)
@@ -38,8 +49,10 @@ class State
         return this.game; 
     }
 
-
 }
+
+
+
 
 
 export default new Proxy( new State(),
