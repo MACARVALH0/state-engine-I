@@ -6,8 +6,6 @@ import EventManager from "./Observer/EventManager.js";
 
 
 
-
-
 // TODO Documentar classe.
 export default class Game
 {
@@ -38,7 +36,18 @@ export default class Game
 
 
         this.eventManager = new EventManager();
+
+        /** Mapa no modelo {tipo_de_evento, handler} */
+        this.handlers = new Map
+        ([
+
+        ]);
     }
+
+    /** Função responsável por redirecionar cada tipo de notificação de evento disparada ao seu handler específico. */
+    handleEvent(event_type, data)
+    { if(this.handlers?.has(event_type)){ this.handlers.get(event_type)(data); } else { throw new Error(`O handler para eventos do tipo ${event_type} não existe.`); } }
+
 
     /**
      * Cria uma nova cena.
@@ -114,6 +123,7 @@ export default class Game
     }
 
     
+    /** OBSOLETE */
     setupKeyboard()
     {
         if(this.keyboard_control) return;
