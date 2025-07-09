@@ -6,7 +6,7 @@ class State
     constructor()
     {
         // INPUTS
-        this.keyboard = new Keyboard();
+        this.keyboard = Keyboard;
 
         this.game;
         this.sound;

@@ -40,7 +40,7 @@ export default class Game
         /** Mapa no modelo {tipo_de_evento, handler} */
         this.handlers = new Map
         ([
-
+            
         ]);
     }
 
