@@ -26,6 +26,7 @@ export default class Scene
         /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
         this.tilemap = [new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {})];
 
+        /** Gerenciador de eventos. */
         this.eventManager = new EventManager();
     }
 
@@ -50,9 +51,6 @@ export default class Scene
 
             // Executa a rotina inicial de um objeto composto e verifica se ele está adequado.
             entity.runInitialRoutine();
-
-            // Notifica a instância de `Game` de que foi criada uma entidade com os atributos de `Controllable`. 
-            if(entity.is_contrlb){this.eventManager.notify("keyboard_req", {})};
 
             // Adiciona ao conjunto de entidades no objeto do jogo.
             this.entities.push(entity);
@@ -80,24 +78,4 @@ export default class Scene
     pause(){}
 
     resume(){};
-
-    // /** Renderiza os elementos visíveis na tela. */
-    // draw()
-    // {
-    //     // Limpa o canvas.
-    //     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    //     // Desenha o personagem do jogador.
-    //     for(player of this.players) this.drawPlayer(player);
-    // }
-
-    
-    // /** Desenha o personagem do jogador. */
-    // drawPlayer(p)
-    // {
-    //     this.ctx.save();
-    //     this.ctx.fillStyle = "rgb(255, 250, 70)";
-    //     this.ctx.fillRect(p.x, p.y, p.w, p.h);
-    //     this.ctx.restore();
-    // }
 }
