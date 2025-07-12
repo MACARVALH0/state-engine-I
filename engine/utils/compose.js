@@ -1,4 +1,5 @@
-import Entity from "../Entity";
+import	Entity		from "../Entity.js";
+import	Observer	from "../Observer/Observer.js";
 
 /**
  * Função compositora de mixins em uma classe base.
@@ -6,11 +7,15 @@ import Entity from "../Entity";
  * @param  {...mixins} mixins Funções que estendem uma determinada classe base.
  * @returns Retorna uma classe composta com as propriedades dos mixins fornecidos.
  */
-export default function compose(Base, ...mixins)
+export function compose(Base, ...mixins)
 {
+	// Lista de funções de rotina inicial dos mixins.
 	const initial_routine = [];
 
-	const Composed =  mixins.reduce( (acc, mixin) =>
+	const mixin_list = [...mixins];
+	mixin_list.push(Observer); // Propriedade de Observer.
+
+	const Composed =  mixin_list.reduce( (acc, mixin) =>
 	{
 		const Mixin = mixin(acc);
 
@@ -25,7 +30,7 @@ export default function compose(Base, ...mixins)
 	Composed.prototype.runInitialRoutine = function()
 	{
 		console.log(`Running initial routine on "${this.name}"`); // FIXME Debug, não será necessário adiante.
-        for(let fn of initial_routine){ fn(); }
+		initial_routine.forEach( fn => fn() );
 		console.log(`O objeto "${this.name}" está adequado.`);
 	};
 
@@ -33,11 +38,20 @@ export default function compose(Base, ...mixins)
 }
 
 
+/**
+ * Função compositora de mixinscom base na classe `Entity`.
+ * @param  {...mixins} mixins Funções que estendem a classe base.
+ * @returns Retorna uma classe composta com as propriedades dos mixins fornecidos.
+ */
 export function composeEntity(...mixins)
 {
+	// Lista de funções de rotina inicial dos mixins.
 	const initial_routine = [];
 
-	const Composed =  mixins.reduce( (acc, mixin) =>
+	const mixin_list = [...mixins];
+	mixin_list.push(Observer); // Propriedade de Observer.
+
+	const Composed =  mixin_list.reduce( (acc, mixin) =>
 	{
 		const Mixin = mixin(acc);
 
@@ -52,8 +66,8 @@ export function composeEntity(...mixins)
 	Composed.prototype.runInitialRoutine = function()
 	{
 		console.log(`Running initial routine on "${this.name}"`); // FIXME Debug, não será necessário adiante.
-        for(let fn of initial_routine){ fn(); }
-		console.log(`O objeto "${this.name}" está adequado.`);
+		initial_routine.forEach( fn => fn() );
+		console.log(`O objeto "${this.name}" está adequado.`); // FIXME Debug, não será necessário adiante.
 	};
 
 	return Composed;
