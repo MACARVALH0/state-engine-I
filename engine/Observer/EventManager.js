@@ -2,6 +2,7 @@ export default class EventManager
 {
     constructor()
     {
+        /** Mapa de valores no modelo {tipo_de_evento, listener}. */
         this.listeners = new Map();
     }
 
@@ -40,6 +41,6 @@ export default class EventManager
     {
         if(!this.listeners.has(event_type)) return;
 
-        this.listeners.get(event_type).forEach( listener => listener.handleEvent(data) );
+        this.listeners.get(event_type).forEach( listener => listener.handleEvent(event_type, data) );
     }
 }
