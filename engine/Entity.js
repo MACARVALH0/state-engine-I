@@ -1,3 +1,5 @@
+import EventManager from "./Observer/EventManager.js";
+
 /**
  * Classe base para instanciação de um determinado objeto na engine.
  */
@@ -15,6 +17,8 @@ export default class Entity
         
         this.name = name;
         this.initial_routine_functions = [];
+
+        this.eventManager = new EventManager();
     }
 
 }
