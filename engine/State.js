@@ -1,12 +1,20 @@
-import  Game        from "./Game";
-import  Keyboard    from "./Keyboard";
+import  Observer    from "./Observer/Observer.js";
+import  Game        from "./Game.js";
+import  keyboard    from "./Keyboard.js";
+import { composeGeneric } from "./utils/compose.js";
 
-class State
+// FIXME Extender `State` de uma classe composta.
+// TODO Documentar classe `State`.
+const state_composition = composeGeneric(Observer);
+
+class State extends state_composition
 {
     constructor()
     {
+        super();
+
         // INPUTS
-        this.keyboard = Keyboard;
+        this.keyboard = keyboard;
 
         this.game;
         this.sound;
@@ -19,33 +27,31 @@ class State
         ]);
     }
 
-    // TODO Talvez, definir uma classe `MasterHandler` (ou algo assim), que leva em si o método de redirecionamento.
-    /** Função responsável por redirecionar cada tipo de notificação de evento disparada ao seu handler específico. */
-    handleEvent(event_type, data)
-    { if(this.handlers?.has(event_type)){ this.handlers.get(event_type)(data); } else { throw new Error(`O handler para eventos do tipo ${event_type} não existe.`); } }
-
 
     /**
      * Função responsável por criar uma instância de `Game` na engine.
      * @param {HTMLCanvasElement} canvas Elemento de canvas no HTML onde o jogo será renderizado.
      */
     createGame(canvas)
-    { 
-        const game_obj = new Game(canvas ?? document.createElement("canvas")); // Garante que um elemento do tipo `HTMLCanvasElement` será passado como argumento.
-    
+    {
+        if(this.game){ throw new Error("Uma instância de \`Game\` já existe."); }
+
+        // Garante que um elemento do tipo `HTMLCanvasElement` será passado como argumento.
+        const game_obj = new Game(canvas ?? document.querySelector("canvas") ?? document.createElement("canvas"));
 
         try
         {
             /// Eventos do teclado ouvidos pelo game_obj.
             this.keyboard.eventManager.subscribe(game_obj, "key_down", "key_up", "key_pressed");
 
-            /// Eventos de `Game` ouvidos por `State`.
-            // game_obj.eventManager.subscribe(this, "scene_created");
+            this.keyboard.startGlobalListener();
 
             
         } catch (err)
         { throw new Error(`Houve um problema na criação do objeto \`Game\`.\nMotivo:\n${err}`); }
-
+        
+        
+        this.game = game_obj;
         return this.game; 
     }
 
@@ -63,7 +69,8 @@ export default new Proxy( new State(),
         
         if(attr == 'game')
         {
-            this.keyboard.eventManager.unsubscribe(game_obj, "key_down", "key_up", "key_pressed");
+            obj.keyboard.eventManager.unsubscribe(obj.game, "key_down", "key_up", "key_pressed");
+            // throw new Error("Não é possível alterar a instância de `Game` dessa forma.");
         }
         
         obj[attr] = value;
