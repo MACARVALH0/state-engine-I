@@ -13,7 +13,7 @@ const Controllable = Base => class extends Base
         this.is_contrlb = true;
 
         // TODO Criar método que adiciona determinada configuração de tecla para uma instância de `Controllable`.
-        this.key_set = config[1].key_set ?? {};
+        // this.key_set = config[1].key_set ?? {};
     }
 }
 
