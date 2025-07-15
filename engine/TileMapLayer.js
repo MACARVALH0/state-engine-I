@@ -33,7 +33,7 @@ export default class TileMapLayer
         /** Altura de um tile. O programa pode assumir o valor 64 como padrão. */
         this.tile_h = options['tile_h'] ? Math.abs(options['tile_h']) : 64;
 
-        /** Garante que a proporção entre os tiles seja mantida nas funções que alteram seus tamanhos.  */
+        /** Garante que a proporção entre largura e altura dos tiles seja mantida nas funções que alteram seus tamanhos. */
         this.keep_tile_size_ratio = true;
 
 
@@ -78,11 +78,12 @@ export default class TileMapLayer
     {
         const tiles = [];
 
-        this.rows.forEach( (element, index, arr) =>
+        // this.rows?.forEach( (element, index, arr) => {});
+        for(let i = 0; i < this.rows; i++)
         {
             // Adiciona à array de tiles uma nova linha com o número de colunas especificado na instância de `TileMapLayer`.
             tiles.push( Array.from({length: this.cols}, () => 0) );
-        });
+        };
 
         return tiles;
     }
