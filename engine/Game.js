@@ -1,32 +1,38 @@
 import SceneManager from "./SceneManager.js";
 import Scene        from "./Scene.js";
 import vkey         from "./virtualKeyboardSetup.js";
-// import Publisher    from "./Observer/Publisher.js";
 import EventManager from "./Observer/EventManager.js";
+import Observer     from "./Observer/Observer.js";
+
+import { composeGeneric } from "./utils/compose.js";
 
 
+// TODO Extender classe composta.
+const game_composition = composeGeneric(Observer);
 
 // TODO Documentar classe.
-export default class Game
+export default class Game extends game_composition
 {
-    constructor(canvas_html_obj)
+    constructor(canvas)
     {
+        super();
+
         // Checando se o argumento é um objeto.
-        if(typeof(canvas_html_obj) != 'object'){ throw new Error("O argumento passado para o construtor deve ser um objeto"); }
+        if(typeof(canvas) != 'object'){ throw new Error("O argumento passado para o construtor deve ser um objeto"); }
     
         // Tenta definir as propriedades básicas de largura, altura e contexto.
         try
         {
             /** Largura do canvas. */
-            this.canvas_width = canvas_html_obj.width;
+            this.canvas_width = canvas.width;
 
             /** Altura do canvas. */
-            this.canvas_height = canvas_html_obj.height;
+            this.canvas_height = canvas.height;
 
             /** Contexto do canvas. */
-            this.ctx = canvas_html_obj.getContext('2d');
+            this.ctx = canvas.getContext('2d');
 
-        } catch(e){ throw new Error("O argumento do construtor deve ser um elemento \`canvas\` HTML."); }
+        } catch(e){ throw new Error(`O argumento do construtor deve ser um elemento \`canvas\` HTML.\n${e}`); }
 
         /** Gerenciador de cenas do jogo. */
         this.sceneManager = new SceneManager();
@@ -34,19 +40,9 @@ export default class Game
         /** ID do laço de execuçãos. */
         this.loop_id = undefined;
 
-
+        /** Gerenciador de eventos. */
         this.eventManager = new EventManager();
-
-        /** Mapa no modelo {tipo_de_evento, handler} */
-        this.handlers = new Map
-        ([
-            
-        ]);
     }
-
-    /** Função responsável por redirecionar cada tipo de notificação de evento disparada ao seu handler específico. */
-    handleEvent(event_type, data)
-    { if(this.handlers?.has(event_type)){ this.handlers.get(event_type)(data); } else { throw new Error(`O handler para eventos do tipo ${event_type} não existe.`); } }
 
 
     /**
