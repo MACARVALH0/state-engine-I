@@ -7,8 +7,8 @@ import Publisher    from "./Observer/Publisher.js";
 
 import { composeGeneric } from "./utils/compose.js";
 
-const game_composition = composeGeneric(Observer, Publisher);
 
+const game_composition = composeGeneric(Observer, Publisher);
 
 // TODO Documentar classe.
 export default class Game extends game_composition
