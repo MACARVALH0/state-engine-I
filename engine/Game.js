@@ -3,12 +3,13 @@ import Scene        from "./Scene.js";
 import vkey         from "./virtualKeyboardSetup.js";
 import EventManager from "./Observer/EventManager.js";
 import Observer     from "./Observer/Observer.js";
+import Publisher    from "./Observer/Publisher.js";
 
 import { composeGeneric } from "./utils/compose.js";
 
 
 // TODO Extender classe composta.
-const game_composition = composeGeneric(Observer);
+const game_composition = composeGeneric(Observer, Publisher);
 
 // TODO Documentar classe.
 export default class Game extends game_composition
@@ -39,9 +40,6 @@ export default class Game extends game_composition
 
         /** ID do laço de execuçãos. */
         this.loop_id = undefined;
-
-        /** Gerenciador de eventos. */
-        this.eventManager = new EventManager();
     }
 
 

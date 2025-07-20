@@ -1,11 +1,13 @@
 import  Observer    from "./Observer/Observer.js";
+import  Publisher   from "./Observer/Publisher.js";
 import  Game        from "./Game.js";
 import  keyboard    from "./Keyboard.js";
+
 import { composeGeneric } from "./utils/compose.js";
 
-// FIXME Extender `State` de uma classe composta.
+
 // TODO Documentar classe `State`.
-const state_composition = composeGeneric(Observer);
+const state_composition = composeGeneric(Observer, Publisher);
 
 class State extends state_composition
 {
@@ -18,13 +20,6 @@ class State extends state_composition
 
         this.game;
         this.sound;
-
-        /** Mapa no modelo {tipo_de_evento, handler} */
-        this.handlers = new Map
-        ([
-            ["scene_created", (e)=>{}], // Handler para requisição de teclado a partir da última instância de `Scene`.
-            ["scene_deleted", (e)=>{}]
-        ]);
     }
 
 
