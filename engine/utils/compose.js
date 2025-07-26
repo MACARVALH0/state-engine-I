@@ -1,5 +1,6 @@
 import	Entity		from "../Entity.js";
 import	Observer	from "../Observer/Observer.js";
+import 	Publisher	from "../Observer/Publisher.js"
 
 /**
  * Função compositora de mixins em uma classe base.
@@ -13,7 +14,7 @@ export function compose(Base, ...mixins)
 	const initial_routine = [];
 
 	const mixin_list = [...mixins];
-	mixin_list.push(Observer); // Propriedade de Observer.
+	// mixin_list.push(Observer); // Propriedade de Observer.
 
 	const Composed =  mixin_list.reduce( (acc, mixin) =>
 	{
@@ -38,42 +39,31 @@ export function compose(Base, ...mixins)
 }
 
 
+/**
+ * Função de composição genérica de mixins sem uma base específica.
+ * @param  {...mixins} mixins Funções `mixin` que serão adicionadas à composição.
+ * @returns Retorna uma classe composta com as propriedades dos mixins fornecidos.
+ */
 export function composeGeneric(...mixins)
 {
-	// Lista de funções de rotina inicial dos mixins.
-	const initial_routine = [];
-
 	const mixin_list = [...mixins];
-	mixin_list.push(Observer); // Propriedade de Observer.
 
 	const Composed =  mixin_list.reduce( (acc, mixin) =>
 	{
 		const Mixin = mixin(acc);
 
-		// COMPOSIÇÃO DA ROTINA INICIAL DA CLASSE ESTENDIDA.
-		if(typeof Mixin.initialRoutine === 'function'){ initial_routine.push(Mixin.initialRoutine); }
-
 		return Mixin; // Retorna mixin para próxima iteração da função redutora.
 		
 	}, class Generic {} );
-
-	// Adiciona ao protótipo da classe composta uma função que executa as funções de rotina inicial existentes em cada mixin.
-	Composed.prototype.runInitialRoutine = function()
-	{
-		console.log(`Running initial routine on "${this.name}"`); // FIXME Debug, não será necessário adiante.
-		initial_routine.forEach( fn => fn() );
-		console.log(`O objeto "${this.name}" está adequado.`);
-	};
 
 	return Composed;
 }
 
 
 
-
 /**
- * Função compositora de mixinscom base na classe `Entity`.
- * @param  {...mixins} mixins Funções que estendem a classe base.
+ * Função compositora de mixins com base na classe `Entity`.
+ * @param  {...mixins} mixins Funções `mixin` que serão adicionadas à composição de `Entity`.
  * @returns Retorna uma classe composta com as propriedades dos mixins fornecidos.
  */
 export function composeEntity(...mixins)
@@ -84,6 +74,7 @@ export function composeEntity(...mixins)
 	/** Lista de mixins na qual são adicionados outros valores arbitrários. */
 	const mixin_list = [...mixins];
 	mixin_list.push(Observer); // Propriedade de Observer.
+	mixin_list.push(Publisher); // Propriedade de Publisher.
 
 	const Composed =  mixin_list.reduce( (acc, mixin) =>
 	{
@@ -105,4 +96,29 @@ export function composeEntity(...mixins)
 	};
 
 	return Composed;
+}
+
+
+/**
+ * Composição de um determinado `behavior` a partir dos componentes recebidos.
+ * @param {*} Base Composição até o último `behavior` adicionado para ser estendida.
+ * @param  {...mixins} mixins Funções `mixin` que serão adicionadas à composição.
+ * @returns Retorna uma classe composta com as propriedades dos mixins fornecidos.
+ */
+export function composeBehavior(Base, ...mixins)
+{
+	if (typeof Base !== 'function') { throw new TypeError("`Base` deve ser uma função construtora."); }
+
+	const Composition = mixins.reduce( (acc, mixin) =>
+	{
+		if (typeof mixin !== 'function') { throw new TypeError('`Mixin` deve ser uma função.'); }
+
+		const Mixin = mixin(acc);
+
+		return Mixin;
+		
+	}, Base );
+
+
+	return Composition;
 }
