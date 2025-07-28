@@ -1,8 +1,16 @@
-// import Publisher     from './Observer/Publisher.js';
-import TileMapLayer from './TileMapLayer.js';
-import EventManager from './Observer/EventManager.js';
+import Observer         from './Observer/Observer.js';
+import Publisher        from './Observer/Publisher.js';
 
-export default class Scene
+import TileMapLayer     from './TileMapLayer.js';
+import CanvasRenderer   from './renderer/CanvasRenderer.js';
+import RenderSystem     from './systems/RenderSystem.js';
+
+import { composeGeneric } from "./utils/compose.js";
+
+const scene_composition = composeGeneric(Observer, Publisher);
+
+// TODO Documentar classe.
+export default class Scene extends scene_composition
 {
     /**
      * @param {int} CANVAS_W Largura do canvas.
@@ -11,6 +19,7 @@ export default class Scene
      */
     constructor(CANVAS_W, CANVAS_H, ctx)
     {
+        super();
         // TODO Documentar atributos.
 
         this.canvas_w = CANVAS_W;
@@ -20,14 +29,14 @@ export default class Scene
         /** Conjunto de entidades/objetos presentes no jogo ou em determinada cena. */
         this.entities = [];
 
-        /** Conjunto de objetos visíveis na cena. Serve para facilitar alguns processos que só devem ocorrer com elementos visíveis na tela. */
-        this.visible = [];
+        this.systems = new Map
+        ([
+            ["render", new RenderSystem(new CanvasRenderer(this.ctx))],
+            // ["physics", new PhysicsSystem()]
+        ])
 
         /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
         this.tilemap = [new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {})];
-
-        /** Gerenciador de eventos. */
-        this.eventManager = new EventManager();
     }
 
 
@@ -44,21 +53,19 @@ export default class Scene
     {
         try
         {
-            // TODO Check if object has "Visible" attribute (if possible) and add it to a specific array of entities to be rendered.
-
-            // Cria um objeto com a composição fornecida.
+            // Criar um objeto com a composição fornecida.
             const entity = new Composition(name, config);
 
-            // Executa a rotina inicial de um objeto composto e verifica se ele está adequado.
+            // Executa a rotina inicial do objeto composto (caso exista) e verifica se ele está adequado.
             entity.runInitialRoutine();
 
-            // Adiciona ao conjunto de entidades no objeto do jogo.
+            // Adiciona objeto ao conjunto de entidades presentes na cena.
+            // FIXME Isso aqui precisa ser revisto.
             this.entities.push(entity);
 
-            // Checa se objeto é visível e, em caso positivo, adiciona à array `visible`.
-            this.visible.push(entity);
+            // FIXME Talvez pensar numa forma de não iterar por todos os sistemas a fim de registrar a entidade.
+            for(let [_, system] of this.systems){ system.register(entity); }
 
-            // Retorna uma referência para o objeto adicionado à cena.
             return entity;
         }
 
@@ -67,10 +74,9 @@ export default class Scene
             if(name) console.error(`Não foi possível criar o objeto composto "${name}":\n`, err);
             else console.error("Não foi possível criar o objeto composto:\n", err);
         }
-
     }
 
-    
+
     update(delta){}
 
     render(){}
