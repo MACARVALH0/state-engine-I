@@ -92,7 +92,7 @@ export function composeEntity(...mixins)
 	{
 		console.log(`Running initial routine on "${this.name}"`); // FIXME Debug, não será necessário adiante.
 		initial_routine.forEach( fn => fn() );
-		console.log(`O objeto "${this.name}" está adequado.`); // FIXME Debug, não será necessário adiante.
+		console.log(`O objeto "${this.name}" está pronto.`); // FIXME Debug, não será necessário adiante.
 	};
 
 	return Composed;
