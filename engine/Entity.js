@@ -20,6 +20,8 @@ export default class Entity extends entity_composition
         // if(!name) throw new Error("É necessário dar um nome ao objeto.");
         console.log(`Criando o objeto "${name}"...`);
         console.log("Classe de entidade básica, com as seguintes extensões:");
+
+        super();
         
         this.name = name;
         this.initial_routine_functions = [];
