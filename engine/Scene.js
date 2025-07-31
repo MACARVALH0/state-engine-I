@@ -33,7 +33,7 @@ export default class Scene extends scene_composition
         ([
             ["render", new RenderSystem(new CanvasRenderer(this.ctx))],
             // ["physics", new PhysicsSystem()]
-        ])
+        ]);
 
         /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
         this.tilemap = [new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {})];

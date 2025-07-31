@@ -1,7 +1,7 @@
 import SceneManager from "./SceneManager.js";
 import Scene        from "./Scene.js";
 import vkey         from "./virtualKeyboardSetup.js";
-import EventManager from "./Observer/EventManager.js";
+
 import Observer     from "./Observer/Observer.js";
 import Publisher    from "./Observer/Publisher.js";
 
