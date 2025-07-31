@@ -1,13 +1,14 @@
-export default class Publisher
+import EventManager from "./EventManager.js";
+
+const Publisher = Base => class extends Base
 {
-    constructor()
+    constructor(...config)
     {
-        this.subscribers = new Set();
+        super(...config);
+
+        /** Gerenciador de eventos. */
+        this.eventManager = new EventManager();
     }
-
-    subscribe(observer){ this.subscribers.add(observer); }
-
-    unsubscribe(observer){ this.subscribers.remove(observer); }
-
-    notify(data){ this.subscribers.forEach( obs => obs.update(data) ); }
 }
+
+export default Publisher;
