@@ -4,8 +4,6 @@ const Observer = Base => class extends Base
     constructor(...config)
     {
         super(...config);
-        
-        /** Mapa no modelo {tipo_de_evento, handler}. */
 
         /**
          * Mapa no modelo {tipo_de_evento, handler}.
@@ -19,6 +17,7 @@ const Observer = Base => class extends Base
         this.handlers = new Map();
     }
 
+    
     /**
      * Registra um handler de evento no Observer.
      * @param {String} event_type Tipo de evento.
