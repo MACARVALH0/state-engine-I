@@ -98,18 +98,6 @@ export default class Game extends game_composition
         requestAnimationFrame(gameLoop); // Invoca a primeira execução de `gameLoop`;
     }
 
-
-    /** Método para descrever atualização com base no atributo de Observer. */
-    // handleSceneEvent()
-    // {
-        
-    // }
-
-    // handleSceneCreation()
-    // {
-        
-    // }
-
     update(delta)
     {
         this.sceneManager.update(delta);
