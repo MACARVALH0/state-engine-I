@@ -1,9 +1,15 @@
-import EventManager from "./Observer/EventManager.js";
+import Observer     from "./Observer/Observer.js";
+import Publisher    from "./Observer/Publisher.js";
+
+import { composeGeneric } from "./utils/compose.js";
+
+
+const entity_composition = composeGeneric(Observer, Publisher);
 
 /**
- * Classe base para instanciação de um determinado objeto na engine.
+ * Classe base para instanciação de uma entidade na engine.
  */
-export default class Entity
+export default class Entity extends entity_composition
 {
     /**
      * Construtor da classe básica.
@@ -18,7 +24,12 @@ export default class Entity
         this.name = name;
         this.initial_routine_functions = [];
 
-        this.eventManager = new EventManager();
+        this.components = new Map();
+
+        console.log("Nova `Entity` criada.");
     }
+
+    // TODO Documentar método.
+    has(...props){ return props.every(p => p in this); }
 
 }
