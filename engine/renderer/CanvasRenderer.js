@@ -14,7 +14,7 @@ export default class CanvasRenderer
      * @param {Number} x Posição `x` do canvas.
      * @param {Number} y Posição `y`do canvas.
      * @param {Number} w Quantidade de pixels representando a largura desde a posição `x`.
-     * @param {Number} h Quantidade de pixels representando a altura desde a posição `x`.
+     * @param {Number} h Quantidade de pixels representando a altura desde a posição `y`.
      * @returns {ImageData} Interface que representa os dados subjacentes dos pixels de uma área do elemento `<canvas>`.
      */
     getImageData(x, y, w, h){ return this.ctx.getImageData(x, y, w, h); }

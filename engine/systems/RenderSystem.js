@@ -18,13 +18,13 @@ export default class RenderSystem
      * @param {Number} x Posição `x` do canvas.
      * @param {Number} y Posição `y` do canvas.
      * @param {Number} width Quantidade de pixels representando a largura desde a posição `x`.
-     * @param {Number} height Quantidade de pixels representando a altura desde a posição `x`.
+     * @param {Number} height Quantidade de pixels representando a altura desde a posição `y`.
      * @returns {ImageData} Interface que representa os dados subjacentes dos pixels de uma área do elemento `<canvas>`.
      */
     getImageData(x, y, width, height){ return this.renderer.getImageData(x, y, width, height); }
 
     // TODO Documentar método.
-    update()
+    update(delta)
     {
         for(let entity of this.entities)
         {
