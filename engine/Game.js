@@ -39,6 +39,8 @@ export default class Game extends game_composition
 
         /** ID do laço de execuçãos. */
         this.loop_id = undefined;
+
+        
     }
 
 
@@ -69,7 +71,7 @@ export default class Game extends game_composition
     }
 
 
-    loop()
+    start()
     {
         let last_time = performance.now();
 
