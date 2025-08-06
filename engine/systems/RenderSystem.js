@@ -1,10 +1,23 @@
+import CanvasRenderer from "../renderer/CanvasRenderer.js";
+
+
 // TODO Documentar classe.
 export default class RenderSystem
 {
-    constructor(renderer)
+    constructor(renderer_opt, canvas)
     {
-        this.renderer = renderer;
+        const {Renderer, ctx} = this.getRenderer(renderer_opt, canvas);
+        this.renderer = new Renderer(ctx); // Instância do renderer.
+
+        // Cache de entidades que compõem o sistema.
         this.entities = new Set();
+    }
+
+    // TODO Documentar método.
+    getRenderer(opt, canvas)
+    {
+        if(opt == 'canvas-renderer'){ const ctx = canvas.getContext('2d'); return { CanvasRenderer, ctx } }
+        // if(opt == 'outro-renderer'){}
     }
 
     /** Registra uma `Entity` no sistema se a mesma cumprir com certos requisitos. */
