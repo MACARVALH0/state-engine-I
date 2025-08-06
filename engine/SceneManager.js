@@ -37,20 +37,21 @@ export default class SceneManager
      */
     update(delta)
     {
-        this.stack.at(-1)?.update?.(delta);
+        if(!this.stack.at(-1)?.paused) this.stack.at(-1)?.update?.(delta);
     }
 
-    /**
-     * Renderiza os gráficos dos objetos visíveis presentes em **todas** as cenas (`Scene`) na pilha.
-     * @param {CanvasRenderingContext2D} ctx Objeto de contexto do canvas do jogo.
-     */
-    render(ctx)
-    {
-        for(const scene of this.stack)
-        {
-            scene.render(ctx);
-        }
-    }
+    // OBSOLETO
+    // /**
+    //  * Renderiza os gráficos dos objetos visíveis presentes em **todas** as cenas (`Scene`) na pilha.
+    //  * @param {CanvasRenderingContext2D} ctx Objeto de contexto do canvas do jogo.
+    //  */
+    // render(ctx)
+    // {
+    //     for(const scene of this.stack)
+    //     {
+    //         scene.render(ctx);
+    //     }
+    // }
 
     /**
      * Renderiza apenas os gráficos dos objetos visíveis da última cena (`Scene`) na pilha.
@@ -58,6 +59,6 @@ export default class SceneManager
      */
     renderLast(ctx)
     {
-        this.stack.at(-1)?.render?.(ctx);
+        if(!this.stack.at(-1)?.paused) this.stack.at(-1)?.render?.(ctx);
     }
 }
