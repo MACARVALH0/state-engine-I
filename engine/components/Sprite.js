@@ -5,7 +5,7 @@ const Sprite = Base => class extends Base
     {
         super(...config);
 
-        this.texture = config["texture_src"] ?? "";
+        this.texture = config["texture_src"] ?? undefined;
     }
 }
 
