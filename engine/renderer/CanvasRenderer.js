@@ -22,6 +22,7 @@ export default class CanvasRenderer
     // TODO Documentar método.
     drawSprite(texture, x, y)
     {
+        if(!texture) return;
         this.ctx.drawImage(texture, x, y);
     }
 }
