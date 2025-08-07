@@ -2,6 +2,8 @@ import Observer         from './Observer/Observer.js';
 import Publisher        from './Observer/Publisher.js';
 
 import TileMapLayer     from './TileMapLayer.js';
+
+// TODO Transferir a responsabilidade de importar o renderer para oum lugar onde faça mais sentido.
 import CanvasRenderer   from './renderer/CanvasRenderer.js';
 import RenderSystem     from './systems/RenderSystem.js';
 
@@ -16,8 +18,9 @@ export default class Scene extends scene_composition
      * @param {int} CANVAS_W Largura do canvas.
      * @param {int} CANVAS_H Altura do canvas.
      * @param {CanvasRenderingContext2D} ctx Contexto do canvas.
+     * @param {Object} options Objeto contendo configurações específicas para a cena.
      */
-    constructor(CANVAS_W, CANVAS_H, ctx)
+    constructor(CANVAS_W, CANVAS_H, ctx, options)
     {
         super();
         // TODO Documentar atributos.
@@ -31,17 +34,21 @@ export default class Scene extends scene_composition
 
         this.systems = new Map
         ([
-            ["render", new RenderSystem(new CanvasRenderer(this.ctx))],
+            ["render", new RenderSystem( options["renderer"] ?? 'canvas-renderer', this.ctx )],
             // ["physics", new PhysicsSystem()]
         ]);
 
         /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
         this.tilemap = [new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {})];
+
+
+        this.paused = false;
     }
 
 
+    // OBSOLETO - O método não é seguro.
     /** Adiciona uma entidade de objeto simples ao conjunto de elementos do jogo. */
-    addSimpleEntity(entity){ this.entities.push(entity); }
+    // addSimpleEntity(entity){ this.entities.push(entity); }
 
     /**
      * Adiciona uma entidade composta ao conjunto de elementos no objeto do jogo.
@@ -74,14 +81,19 @@ export default class Scene extends scene_composition
             if(name) console.error(`Não foi possível criar o objeto composto "${name}":\n`, err);
             else console.error("Não foi possível criar o objeto composto:\n", err);
         }
-    }
+    };
 
 
-    update(delta){}
+    update(delta)
+    {
+        this.systems.forEach((system) =>
+        {
+            system.update(delta);
+        });
+    };
 
-    render(){}
 
-    pause(){}
+    pause(){};
 
-    resume(){};
+    resume(){};;
 }
