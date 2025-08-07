@@ -31,6 +31,8 @@ class State extends state_composition
     {
         if(this.game){ throw new Error("Uma instância de \`Game\` já existe."); }
 
+        // TODO Adicionar uma camada extra de `safe_canvas`, garantindo que `canvas` é um elemento `<canvas>` válido.
+
         // Garante que um elemento do tipo `HTMLCanvasElement` será passado como argumento.
         const game_obj = new Game(canvas ?? document.querySelector("canvas") ?? document.createElement("canvas"));
 
@@ -41,11 +43,11 @@ class State extends state_composition
 
             this.keyboard.startGlobalListener();
 
-            
+
         } catch (err)
         { throw new Error(`Houve um problema na criação do objeto \`Game\`.\nMotivo:\n${err}`); }
-        
-        
+
+
         this.game = game_obj;
         return this.game; 
     }
