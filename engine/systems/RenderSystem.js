@@ -6,17 +6,23 @@ export default class RenderSystem
 {
     constructor(renderer_opt, canvas)
     {
-        const {Renderer, ctx} = this.getRenderer(renderer_opt, canvas);
+        const { Renderer, ctx } = this.getRenderer(renderer_opt, canvas);
         this.renderer = new Renderer(ctx); // Instância do renderer.
 
-        // Cache de entidades que compõem o sistema.
+        // Cache de entidades que compoem o sistema.
         this.entities = new Set();
     }
 
-    // TODO Documentar método.
+
+    /**
+     * Retorna o renderer definido para o sistema de renderização.
+     * @param {String} opt Nome do renderer solicitado.
+     * @param {HTMLCanvasElement} canvas Elemento `<canvas>` que provê o `CanvasRenderingContext2D` da cena.
+     * @returns Objeto `{Renderer, ctx}`.
+     */
     getRenderer(opt, canvas)
     {
-        if(opt == 'canvas-renderer'){ const ctx = canvas.getContext('2d'); return { CanvasRenderer, ctx } }
+        if(opt == 'canvas-renderer'){ return { Renderer: CanvasRenderer, ctx: canvas.getContext('2d') } }
         // if(opt == 'outro-renderer'){}
     }
 
@@ -36,7 +42,11 @@ export default class RenderSystem
      */
     getImageData(x, y, width, height){ return this.renderer.getImageData(x, y, width, height); }
 
-    // TODO Documentar método.
+
+    /**
+     * Atualiza a cena com base em `delta`.
+     * @param {Number} delta Inteiro representando a quantidade de segundos passados entre um frame e outro.
+     */
     update(delta)
     {
         for(let entity of this.entities)
