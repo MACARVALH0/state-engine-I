@@ -92,8 +92,8 @@ export default class Scene extends scene_composition
         });
     };
 
+    
+    pause(){ this.paused = true; };
 
-    pause(){};
-
-    resume(){};;
+    resume(){ this.paused = false; };
 }
