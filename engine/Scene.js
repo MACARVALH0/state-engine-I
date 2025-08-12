@@ -1,12 +1,9 @@
-import Observer         from './Observer/Observer.js';
-import Publisher        from './Observer/Publisher.js';
-
 import TileMapLayer     from './TileMapLayer.js';
 
-// TODO Transferir a responsabilidade de importar o renderer para oum lugar onde faça mais sentido.
-import CanvasRenderer   from './renderer/CanvasRenderer.js';
 import RenderSystem     from './systems/RenderSystem.js';
 
+import Observer         from './Observer/Observer.js';
+import Publisher        from './Observer/Publisher.js';
 import { composeGeneric } from "./utils/compose.js";
 
 const scene_composition = composeGeneric(Observer, Publisher);
