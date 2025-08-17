@@ -11,11 +11,29 @@ const ImageManager = Base => class extends Base
         this.src_list = new Set();
     }
 
+    
+    /**
+     * Aponta se um arquivo de imagem existe ou não.
+     * @param {String} path Caminho para o arquivo a ser verificado.
+     * @returns {Promise<Boolean>}
+     */
+    checkImageExists(path)
+    {
+        return new Promise( resolve =>
+        {
+            const img = new Image();
+            img.onload = () => resolve(true);   // O arquivo existe.
+            img.onerror = () => resolve(false); // O arquivo não existe.
+            img.src = path + '?cachebust=' + Date.now();
+        })
+    }
+
+
     /**
      * Carrega uma imagem ou uma sequência de imagens para a memória.
      * @param {String} name Nome de referência do arquivo de mídia para ser utilizado dentro da interface do programa, algo como um "id".
      * @param {String} filename Nome do arquivo de mídia.
-     * @param {?} find_strip Procura por uma sequência de sprites com o mesmo nome que seguem uma sequência e possuem "strip" no nome do arquivo.
+     * @param {?|Boolean} find_strip Procura por uma sequência de sprites com o mesmo nome que seguem uma sequência e possuem "strip" no nome do arquivo.
      * Adiciona um overhead à função, mas é útil para importação de uma sequência de sprites de uma animação.
      * @returns Retorna uma array contendo o caminho para cada arquivo adicionado.
      */
@@ -29,14 +47,14 @@ const ImageManager = Base => class extends Base
         if(this.src_list.has(filename))
         {
             console.warn("O arquivo", filename, "já foi carregado.");
-            return [filename];
+            return new Set([filename]);
         }
 
         // Verifica se `name` já foi registrado.
         if(this.sprites.has(name))
         {
             console.warn("Já existe um sprite registrado sob o id", name, "na memória.");
-            return [this.sprites.get(name).src];
+            return new Set([this.sprites.get(name).src]);
         }
 
         // Verificação sobre `find_strip`.
@@ -47,37 +65,37 @@ const ImageManager = Base => class extends Base
             if(strip_index >= 0)
             {
                 const strip = this.loadStrip(filename);
-                let index = 0;
+                
                 if(strip)
                 {
-                    const sources = [];
-
+                    let index = 0;
+                    
                     strip.forEach( src =>
                     {
                         const img = new Image();
                         img.src = src;
 
                         this.sprites.set(`${name}${index++}`, {img: img, src: src});
-
-                        sources.push(src);
                     });
 
-                    return sources;
+                    return strip;
                 }
             }
         }
 
+        // Nesse caso, não se preocupa em encontrar algum tipo de continuidade da imagem buscada.
         const img = new Image();
         img.src = full_path;
 
         this.sprites.set(name, {img: img, src: full_path});
 
-        return [img.src];
+        return new Set([img.src]);
     }
 
     /**
      * Carrega uma sequência de sprites com o mesmo nome.
      * @param {String} filename Nome base do arquivo.
+     * @returns uma lista caminhos para imagens que (teoricamente) formam uma sequência.
      */
     loadStrip(filename)
     {
