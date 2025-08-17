@@ -1,4 +1,5 @@
 import TileMapLayer     from './TileMapLayer.js';
+import AssetManager     from './AssetManager/AssetManager.js';
 
 import RenderSystem     from './systems/RenderSystem.js';
 
@@ -38,6 +39,7 @@ export default class Scene extends scene_composition
         /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
         this.tilemap = [new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {})];
 
+        this.assetManager = new AssetManager();
 
         this.paused = false;
     }
