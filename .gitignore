@@ -1,11 +1,13 @@
 # Node modules
 node_modules/
 
+# Server
+server
+
 # Dev environment
 .vscode
 package.json
 package-lock.json
 public
-src
 dev
 
