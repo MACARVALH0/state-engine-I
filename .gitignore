@@ -2,7 +2,7 @@
 node_modules/
 
 # Server
-server
+server/
 
 # Dev environment
 .vscode
@@ -10,4 +10,3 @@ package.json
 package-lock.json
 public
 dev
-
