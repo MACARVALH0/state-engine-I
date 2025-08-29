@@ -6,7 +6,7 @@ const ImageManager = Base => class extends Base
     {
         super();
 
-        this.img_base_path = 'Game/Sprites';
+        this.img_base_path = 'Game/Assets/Sprites';
         this.sprites = new Map();
         this.src_list = new Set();
     }
@@ -131,17 +131,16 @@ const ImageManager = Base => class extends Base
             {
                 if(exists) strip.add(path);
                 else finished = true;
-                
             });
 
             if(finished) break;
 
             // Verifica se a quantidade de casas decimais no índice aumentou e atualiza posição de `sprite_path_core2`.
-            if(sprites_index.toString().length != ++sprites_index.toString())
-            {
-                index_len++;
-                sprite_path_core2 = filename.substring(index_pos+index_len, filename.length-1);
-            }
+            // if(sprites_index.toString().length != (++sprites_index).toString())
+            // {
+            //     index_len++;
+            //     sprite_path_core2 = filename.substring(index_pos+index_len, filename.length-1);
+            // }
         }
 
         return strip.size>0 ? strip : undefined;
