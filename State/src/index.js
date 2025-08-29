@@ -6,6 +6,7 @@ import  keyboard    from "./Keyboard.js";
 import { composeGeneric } from "./utils/compose.js";
 
 
+
 // TODO Documentar classe `State`.
 const state_composition = composeGeneric(Observer, Publisher);
 
@@ -53,7 +54,6 @@ class State extends state_composition
     }
 
 }
-
 
 
 
