@@ -1,0 +1,7 @@
+# Relative standard game files path.
+game_path: "/public/Game"
+
+# Assets directories relative to `game_path`.
+game_assets:
+  root_path: "/Assets"
+  sprites_dir_path: "/Assets/Sprites"
