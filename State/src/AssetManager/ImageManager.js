@@ -2,148 +2,131 @@
 // TODO Fazer testes.
 const ImageManager = Base => class extends Base
 {
-    constructor()
+    constructor(...config)
     {
-        super();
+        super(...config);
 
-        this.img_base_path = 'Game/Assets/Sprites';
+        this.img_path = config["img_path"] ?? "/Sprites"; 
+
+        /** @type {Map<String, Array<HTMLImageElement>} */
         this.sprites = new Map();
-        this.src_list = new Set();
-    }
-
-    
-    /**
-     * Aponta se um arquivo de imagem existe ou não.
-     * @param {String} path Caminho para o arquivo a ser verificado.
-     * @returns {Promise<Boolean>}
-     */
-    checkImageExists(path)
-    {
-        return new Promise( resolve =>
-        {
-            const img = new Image();
-            img.onload = () => resolve(true);   // O arquivo existe.
-            img.onerror = () => resolve(false); // O arquivo não existe.
-            img.src = path + '?cachebust=' + Date.now();
-        })
+        // this.src_list = new Set();
     }
 
 
     /**
      * Carrega uma imagem ou uma sequência de imagens para a memória.
-     * @param {String} name Nome de referência do arquivo de mídia para ser utilizado dentro da interface do programa, algo como um "id".
+     * @param {String | Number} id_name String ou número de referência do arquivo de mídia para ser utilizado dentro da interface do programa, algo como um "id".
      * @param {String} filename Nome do arquivo de mídia.
-     * @param {?|Boolean} find_strip Procura por uma sequência de sprites com o mesmo nome que seguem uma sequência e possuem "strip" no nome do arquivo.
+     * @param {Boolean} find_strip Procura por uma sequência de sprites com o mesmo nome que seguem uma sequência e possuem "strip" no nome do arquivo.
      * Adiciona um overhead à função, mas é útil para importação de uma sequência de sprites de uma animação.
-     * @returns Retorna uma array contendo o caminho para cada arquivo adicionado.
+     * @returns {Set<String>} Retorna uma array contendo o caminho para cada arquivo adicionado.
      */
-    loadImage(name, filename, find_strip = false)
+    loadImage(id_name, filename, find_strip = false)
     {
         if(typeof filename != 'string') throw new Error("O nome do arquivo deve ser uma string.");
 
-        const full_path = `${this.img_base_path}/${filename.trim()}`;
-
-        // Verifica se o arquivo `filename` já foi carregado na memória.
-        if(this.src_list.has(filename))
+        if(this.sprites.has(id_name))
         {
-            console.warn("O arquivo", filename, "já foi carregado.");
-            return new Set([filename]);
+            console.warn("Uma imagem já foi renderizada sob o id", "\""+id_name+"\".");
+            return;
         }
 
-        // Verifica se `name` já foi registrado.
-        if(this.sprites.has(name))
-        {
-            console.warn("Já existe um sprite registrado sob o id", name, "na memória.");
-            return new Set([this.sprites.get(name).src]);
-        }
-
-        // Verificação sobre `find_strip`.
         if(find_strip)
         {
-            // Verifica se a palavra `strip` está presente no nome do arquivo e executa `loadStrip`.
-            const strip_index = filename.search(/strip/);
+            /** Índice do primeiro caractere do trecho "strip" no nome do arquivo, caso ele exista. */
+            const strip_index = filename.search(/strip/i);
+            
+            // Verifica se o texto "strip" está presente no nome do arquivo.
             if(strip_index >= 0)
             {
-                const strip = this.loadStrip(filename);
-                
-                if(strip)
+                const frame_path_strip = this.loadStrip(filename);
+
+                const frame_list = [];
+
+                frame_path_strip.forEach( frame_src =>
                 {
-                    let index = 0;
-                    
-                    strip.forEach( src =>
-                    {
-                        const img = new Image();
-                        img.src = src;
+                    const img = new Image();
+                    img.src = frame_src;
+                    frame_list.push( img );    
+                });
 
-                        this.sprites.set(`${name}${index++}`, {img: img, src: src});
-                    });
+                this.sprites.set(id_name.slice(0, strip_index), frame_list);
 
-                    return strip;
-                }
+                // TODO Adicionar esquema de debug que exiba a chave da sequência de sprites recém adicionada no console.
+                return frame_list;
             }
         }
 
-        // Nesse caso, não se preocupa em encontrar algum tipo de continuidade da imagem buscada.
+
+        // Caso `find_strip` seja falso ou o trecho "strip" não seja encontrado no nome do arquivo.
         const img = new Image();
-        img.src = full_path;
+        img.src = filename;
+        this.sprites.set(id_name, [img]);
 
-        this.sprites.set(name, {img: img, src: full_path});
-
-        return new Set([img.src]);
+        // TODO O mesmo esquema de debug poderia exibir a chave para o sprite.
+        return [img];
     }
+
 
     /**
      * Carrega uma sequência de sprites com o mesmo nome.
      * @param {String} filename Nome base do arquivo.
-     * @returns uma lista caminhos para imagens que (teoricamente) formam uma sequência.
+     * @returns {Array<String>} uma lista caminhos para imagens que (teoricamente) formam uma sequência.
      */
     loadStrip(filename)
     {
         /** Índice de ordem do sprite na sequência/strip (em forma de string). */
-        const sprite_index = filename.match(/\d{1,3}/g).pop();
+        const sprite_string_index = filename.match(/\d{1,3}/g).pop();
         
-        /** Índice em forma numérica. */
-        let sprites_index = Number(sprite_index);
-        
+        // TODO Contornar uso de `var`.
         /** Número de casas decmimais do índice de um sprite pertencente a uma animação. */
-        let index_len = sprite_index.length;
-
+        var index_string_len = sprite_string_index.length;
+        
         /** Índice da posição na string de `filename` onde o índice do sprite em uma sequência (strip) está localizado. */
-        const index_pos = filename.indexOf(sprite_index);
+        const index_string_pos = filename.indexOf(sprite_string_index);
+        
+        // TODO Contornar uso de `var`.
+        /** Índice em forma numérica. */
+        var sprites_index_n = Number(sprite_string_index);
 
         /** Núcleo do caminho para o sprite antes do índice de ordem na sequência (strip). */
-        const sprite_path_core1 = `${this.img_base_path}/${filename.substring(0, index_pos)}`;
+        const sprite_path_part1 = `${this.img_base_path}/${filename.substring(0, index_string_pos)}`;
 
         /** Continuação do nome do caminho para o sprite da sequência após o índice. */
-        const sprite_path_core2 = filename.substring(index_pos+index_len, filename.length-1);
+        const sprite_path_part2 = filename.substring(index_string_pos+index_string_len, filename.length-1);
+
 
         /** Sequência/tira de sprites de uma mesma animação. */
         const strip = new Set();
 
-        let finished = false;
 
-        while(index_pos >= 0)
+        // Confirma a existência de um índice no filename.
+        if(index_string_pos >= 0)
         {
-            /** Path para o sprite. */
-            const path = sprite_path_core1 + sprites_index + sprite_path_core2;
+            let finished = false;
 
-            this.checkFileExists(path).then( exists =>
+            while( !finished )
             {
-                if(exists) strip.add(path);
+                const path = sprite_path_part1 + sprites_index_n + sprite_path_part2;
+
+                if( this.files.sprites.includes(path) ) strip.add(path);
+                
                 else finished = true;
-            });
 
-            if(finished) break;
-
-            // Verifica se a quantidade de casas decimais no índice aumentou e atualiza posição de `sprite_path_core2`.
-            // if(sprites_index.toString().length != (++sprites_index).toString())
-            // {
-            //     index_len++;
-            //     sprite_path_core2 = filename.substring(index_pos+index_len, filename.length-1);
-            // }
+                // Verifica se a quantidade de casas decimais no índice aumentou e atualiza posição de `sprite_path_part2`.
+                if( sprite_string_index.toString().length != (++sprite_string_index).toString() )
+                {
+                    index_string_len++;
+                    sprite_path_part2 = filename.substring(index_pos+index_len, filename.length-1);
+                }
+            }
         }
 
-        return strip.size>0 ? strip : undefined;
+
+        return strip.size > 0
+        ? strip
+        : undefined;
     }
 }
 
