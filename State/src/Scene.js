@@ -13,31 +13,28 @@ const scene_composition = composeGeneric(Observer, Publisher);
 export default class Scene extends scene_composition
 {
     /**
-     * @param {int} CANVAS_W Largura do canvas.
-     * @param {int} CANVAS_H Altura do canvas.
-     * @param {CanvasRenderingContext2D} ctx Contexto do canvas.
+     * Construtor de `Scene`.
+     * @param {Number} CANVAS_W Largura do canvas.
+     * @param {Number} CANVAS_H Altura do canvas.
+     * @param {CanvasRenderingContext2D} CANVAS_CTX Contexto do canvas.
      * @param {Object} options Objeto contendo configurações específicas para a cena.
      */
-    constructor(CANVAS_W, CANVAS_H, ctx, options)
+    constructor(CANVAS_W, CANVAS_H, CANVAS_CTX, options)
     {
         super();
-        // TODO Documentar atributos.
 
-        this.canvas_w = CANVAS_W;
-        this.canvas_h = CANVAS_H;
-        this.ctx = ctx;
-
-        /** Conjunto de entidades/objetos presentes no jogo ou em determinada cena. */
+        /** Conjunto de entidades/objetos presentes na cena atual. */
         this.entities = [];
 
+        /** Sistemas presentes na cena. */
         this.systems = new Map
         ([
-            ["render", new RenderSystem( options["renderer"] ?? 'canvas-renderer', this.ctx )],
+            ["render", new RenderSystem( options["renderer"] ?? 'canvas-renderer', CANVAS_CTX )],
             // ["physics", new PhysicsSystem()]
         ]);
 
         /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
-        this.tilemap = [new TileMapLayer(undefined, this.canvas_w, this.canvas_h, {})];
+        this.tilemap = [new TileMapLayer(undefined, CANVAS_W, CANVAS_H, {})];
 
         this.assetManager = new AssetManager();
 
@@ -45,15 +42,11 @@ export default class Scene extends scene_composition
     }
 
 
-    // OBSOLETO - O método não é seguro.
-    /** Adiciona uma entidade de objeto simples ao conjunto de elementos do jogo. */
-    // addSimpleEntity(entity){ this.entities.push(entity); }
-
     /**
      * Adiciona uma entidade composta ao conjunto de elementos no objeto do jogo.
      * @param {String} name Nome referenciável do objeto.
      * @param {ComposedClass} Composition Composição de classe base + mixins de propriedades.
-     * @param  {...any} config Itens de configuração das propriedades dos mixins.
+     * @param {...any} config Itens de configuração das propriedades dos mixins.
      */
     addComposedEntity(name, Composition, ...config)
     {
