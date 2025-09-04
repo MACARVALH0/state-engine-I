@@ -9,7 +9,10 @@ export default class RenderSystem
         const { Renderer, ctx } = this.getRenderer(renderer_opt, canvas);
         this.renderer = new Renderer(ctx); // Instância do renderer.
 
-        // Cache de entidades que compoem o sistema.
+        this.screen_width = canvas.width;
+        this.screen_height = canvas.height;
+
+        /** Cache de entidades que compoem o sistema. */
         this.entities = new Set();
     }
 
@@ -29,7 +32,7 @@ export default class RenderSystem
     /** Registra uma `Entity` no sistema se a mesma cumprir com certos requisitos. */
     register(entity)
     {
-        if(entity.has('x', 'y', 'is_visible')){ this.entities.add(entity); }
+        if(entity.has('x', 'y', 'texture')){ this.entities.add(entity); }
     }
 
     /**
@@ -42,6 +45,8 @@ export default class RenderSystem
      */
     getImageData(x, y, width, height){ return this.renderer.getImageData(x, y, width, height); }
 
+    // TODO Documentar método.
+    drawImage(texture, x,  y){ this.renderer.drawImage(texture, x, y); }
 
     /**
      * Atualiza a cena com base em `delta`.
@@ -49,9 +54,11 @@ export default class RenderSystem
      */
     update(delta)
     {
+        this.renderer.cleanScreen(this.screen_width, this.screen_height);
+
         for(let entity of this.entities)
         {
-            this.renderer.drawSprite(entity.texture, entity.x, entity.y);
+            this.drawImage(entity.texture, entity.x, entity.y);
         }
     }
 }
