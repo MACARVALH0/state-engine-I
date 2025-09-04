@@ -80,9 +80,6 @@ export default class Game extends game_composition
         */
         scene.eventManager.subscribe(this, "entity_created");
         
-        // OBSOLETO
-        // scene.eventManager.subscribe(this, "keyboard_req"); // `Game` se torna um observer de eventos da instância de `Scene`.
-
         this.sceneManager.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
 
         return scene; // Retorna a instância de `Scene` criada.
