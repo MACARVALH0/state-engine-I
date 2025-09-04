@@ -10,7 +10,7 @@ const Controllable = Base => class extends Base
         super(...config);
         console.log("- Controllable.");
 
-        this.is_contrlb = true;
+        this.is_controllable = true;
 
         // TODO Criar método que adiciona determinada configuração de tecla para uma instância de `Controllable`.
         // this.key_set = config[1].key_set ?? {};
