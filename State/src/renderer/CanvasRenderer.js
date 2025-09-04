@@ -1,3 +1,5 @@
+import Shape from "../components/Shape.js";
+
 export default class CanvasRenderer
 {
     /**
@@ -19,8 +21,15 @@ export default class CanvasRenderer
      */
     getImageData(x, y, w, h){ return this.ctx.getImageData(x, y, w, h); }
 
+    /**
+     * Limpa o canvas inteiro.
+     * @param {Number} screen_width Largura da tela. 
+     * @param {Number} screen_height Altura da tela.
+     */
+    cleanScreen(screen_width, screen_height){ this.ctx.clearRect(0, 0, screen_width, screen_height); }
+
     // TODO Documentar método.
-    drawSprite(texture, x, y)
+    drawImage(texture, x, y)
     {
         if(!texture) return;
         this.ctx.drawImage(texture, x, y);
