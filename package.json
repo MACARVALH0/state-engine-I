@@ -1,0 +1,27 @@
+{
+  "name": "state-engine-i",
+  "version": "1.0.0",
+  "description": "​\t**State** é o projeto de uma interface de desenvolvimento que fornece uma série de funcionalidades 'pré-cozidas' pensados para a criação de experiências interativas na Web, como jogos, de forma intuitiva e fácil de aprender.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node dev/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MACARVALH0/state-engine-I.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MACARVALH0/state-engine-I/issues"
+  },
+  "homepage": "https://github.com/MACARVALH0/state-engine-I#readme",
+  "devDependencies": {
+    "express": "^5.1.0",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  }
+}
