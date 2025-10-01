@@ -1,17 +1,12 @@
 # Node modules
 node_modules/
 
-# Node package files
-package.json
-package-lock.json
-
 # Webpack
-webpack.config.cjs
+webpack.config.js
 
 # Server
-server/
+dev-server/
 
 # Dev environment
 .vscode
 dev
-public
