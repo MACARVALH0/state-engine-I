@@ -1,12 +1,12 @@
+# VS Code
+.vscode/
+
 # Node modules
 node_modules/
 
-# Webpack
-webpack.config.js
+# Arquivos relacionados ao desenvolvimento
+dev/
+public/
 
-# Server
-dev-server/
-
-# Dev environment
-.vscode
-dev
+# Vite
+vite.config.js
