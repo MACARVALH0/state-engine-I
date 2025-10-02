@@ -18,10 +18,5 @@
   "bugs": {
     "url": "https://github.com/MACARVALH0/state-engine-I/issues"
   },
-  "homepage": "https://github.com/MACARVALH0/state-engine-I#readme",
-  "devDependencies": {
-    "express": "^5.1.0",
-    "webpack": "^5.101.3",
-    "webpack-cli": "^6.0.1"
-  }
+  "homepage": "https://github.com/MACARVALH0/state-engine-I#readme"
 }
