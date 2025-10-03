@@ -7,27 +7,57 @@ const asset_manager_composition = composeGeneric(ImageManager);
 // const AssetManager = Base => class extends Base
 export default class AssetManager extends asset_manager_composition
 {
-    constructor(assets_path = "Game/Assets", ...config)
+    constructor(assets_path = "Game/Assets", manifest, ...config)
     {
         super(...config);
 
-        this.base_path = assets_path;
+        this.assets_path = assets_path;
+
+        this.assets_manifest = undefined;
+        
+        // TODO Criar função que modifica essas variáveis
+        // this.rel_audio_path = ".";
 
         /** Caminhos para os arquivos dos assets separados por tipo. */
-        this.files = this.getPaths();
+        this.assets = 
+        {
+            /** @type {Map<String, HTMLImageElement>} */
+            image: this.preloadImages(manifest.images),
+            
+            // audio
+        }
     }
 
-    /** Captura informações de Assets via `manifest.json` no caminho especificado em `this.assets_path`. */
-    async getPaths()
+
+    /**
+     * Prepara e retorna uma instância da classe AssetManager.
+     * @param {String} assets_path Caminho para o diretório de assets. 
+     * @returns {AssetManager} Instância de AssetManager já estendendo outros managers de assets específicos.
+     */
+    static async create(assets_path)
     {
-        const route = this.base_path + "/manifest.json";
+        // Rota para `assets_path/assets.json`.
+        const route = assets_path + (assets_path.at(-1) == '/' ? '' : '/') + "assets.json";
 
         const response = await fetch(route);
-        if(!response.ok) throw new Error( "Não foi possível carregar informações de assets.\n"+err );
 
-        const content = await response.json();
-        console.log("Arquivo de caminhos de sprites carregado.")
+        if(!response.ok){ throw new Error(`Não foi possível carregar o caminho do \`assets.json\`:\n${response.status}`); }
 
-        return content;
+        const manifest = await response.json();
+
+        return new AssetManager(assets_path, manifest);
     }
-};
+
+
+    
+    getImages(path_array)
+    {
+        // const elements = [];
+        // let img_id;
+        // state ? img_id = `media/${directory}/${group}/${state}` : img_id = `media/${directory}/${group}`;
+
+        // document.querySelector('#game_sprites').innerHTML += `<img id='${group}' src="${img_id}.png">`
+
+        // return document.querySelector(`#${group}`);
+    }
+}
