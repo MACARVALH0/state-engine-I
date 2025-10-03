@@ -1,3 +1,4 @@
+import AssetManager from './AssetManager/AssetManager.js';
 import SceneManager from "./SceneManager.js";
 import Scene        from "./Scene.js";
 
@@ -12,32 +13,29 @@ const game_composition = composeGeneric(Observer, Publisher);
 // TODO Documentar classe.
 export default class Game extends game_composition
 {
+    /**
+     * 
+     * @param {Object} canvas
+     */
     constructor(canvas)
     {
         super();
 
-        // Checando se o argumento é um objeto.
-        if(typeof(canvas) != 'object'){ throw new Error("O argumento passado para o construtor deve ser um objeto"); }
-    
-        // Tenta definir as propriedades básicas de largura, altura e contexto.
-        try
-        {
-            // Cache do canvas na instância de `Game`.
-            this.canvas = canvas;
+        if(!(canvas instanceof HTMLCanvasElement)){ throw new Error("O argumento do construtor deve ser um elemento <canvas> do HTML. (HTMLCanvasElement"); }
 
-            /** Largura do canvas. */
-            this.canvas_width = this.canvas.width;
+        // Cache do canvas na instância de `Game`.
+        this.canvas = canvas;
 
-            /** Altura do canvas. */
-            this.canvas_height = this.canvas.height;
+        /** Largura do canvas. */
+        this.canvas_width = this.canvas.width;
 
-            // OBSOLETO
-            // /** Contexto do canvas. */
-            // this.ctx = canvas.getContext('2d');
+        /** Altura do canvas. */
+        this.canvas_height = this.canvas.height;
 
-        } catch(e){ throw new Error(`O argumento do construtor deve ser um elemento \`canvas\` HTML.\n${e}`); }
+        /** Gerenciador de assets do game. */
+        // this.assetManager = new AssetManager();
 
-        /** Gerenciador de cenas do jogo. */
+        /** Gerenciador de cenas do game. */
         this.sceneManager = new SceneManager();
 
         /**
@@ -48,8 +46,6 @@ export default class Game extends game_composition
 
         /** ID do laço de execuçãos. */
         this.loop_id = undefined;
-
-        
     }
 
 
@@ -79,10 +75,23 @@ export default class Game extends game_composition
             - Nova entidade criada;
         */
         scene.eventManager.subscribe(this, "entity_created");
-        
+
+
         this.sceneManager.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
 
         return scene; // Retorna a instância de `Scene` criada.
+    }
+
+    /**
+     * Define o caminho para os assets (arquivos estáticos) do jogo.
+     * 
+     * @param {String} path Caminho para diretório de arquivos estáticos. 
+     */
+    defineAssetsPath(path)
+    {
+        if(!this.assetManager){ this.assetManager = AssetManager.create(path); }
+
+        else return;
     }
 
 
