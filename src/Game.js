@@ -114,6 +114,7 @@ export default class Game extends game_composition
      */
     update(current_time)
     {
+        // console.log("...");
         const delta = (current_time - this.last_update) / 1000; // Tempo que passou, em segundos.
         this.last_update = current_time;
 
