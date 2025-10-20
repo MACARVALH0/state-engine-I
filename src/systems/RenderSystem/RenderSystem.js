@@ -33,7 +33,14 @@ export default class RenderSystem
     /** Registra uma `Entity` no sistema se a mesma cumprir com certos requisitos. */
     register(entity)
     {
-        if(entity.has('x', 'y' /*, 'texture'*/) && entity.is_visible){ this.entities.add(entity); }
+        // Propriedades que devem ser encontradas na entidade para registrá-la no sistema.
+        const props = ['x', 'y'];
+        if
+        (
+            props.every( p => p in entity)
+            && entity.is_visible
+        )
+        { this.entities.add(entity); }
     }
 
     /**
