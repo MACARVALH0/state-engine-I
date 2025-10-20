@@ -1,28 +1,38 @@
+// TODO Criar sistema de caching.
+
+// TODO Documentar mixin.
 const Cacheable = Base => class extends Base
 {
-    constructor()
+    constructor(...config)
     {
-        this.width = undefined;
-        this.height = undefined;
+        super(...config);
 
-        this.scale = 1;
+        this.cache =
+        {
+            exists: false, // FIXME Solução provisória.
 
-        this.x = undefined;
-        this.y = undefined;
-
-        this.offset_x = undefined;
-        this.offset_y = undefined;
-
-        this._f_offset_x = undefined;
-        this._f_offset_y = undefined;
-
-        this._DataURL_id = 0;
-
-        this._DataURL = null;
-
-        this._draw_width = 0;
-
-        this._draw_height = 0;
+            width: undefined,
+            height: undefined,
+    
+            scale: 1,
+    
+            x: undefined,
+            y: undefined,
+    
+            offset_x: undefined,
+            offset_y: undefined,
+    
+            _f_offset_x: undefined,
+            _f_offset_y: undefined,
+    
+            _DataURL_id: 0,
+    
+            _DataURL: null,
+    
+            _draw_width: 0,
+    
+            _draw_height: 0,
+        }
     }
 }
 
