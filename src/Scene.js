@@ -1,20 +1,25 @@
-import TileMapLayer     from './TileMapLayer.js';
-import AssetManager     from './AssetManager/AssetManager.js';
+// Gerenciadores
+import GraphLayerManager    from './GraphLayer/GraphLayerManager.js';
 
-import RenderSystem     from './systems/RenderSystem.js';
+// Systems
+import RenderSystem         from './systems/RenderSystem/RenderSystem.js';
 
-import Observer         from './Observer/Observer.js';
-import Publisher        from './Observer/Publisher.js';
+// Extensões de classe
+import Observer             from './Observer/Observer.js';
+import Publisher            from './Observer/Publisher.js';
+
+// Outros
+import Shape    from './components/Shape.js';
+import Entity   from './Entity.js';
+
 import { composeEntity, composeGeneric } from "./utils/compose.js";
-import Shape from './components/Shape.js';
-import Entity from './Entity.js';
 
 import * as behaviors from "./behaviors/behaviors.js"
+import Sprite from './components/Sprite.js';
 
-const scene_composition = composeGeneric(Observer, Publisher);
 
 // TODO Documentar classe.
-export default class Scene extends scene_composition
+export default class Scene extends composeGeneric(Observer, Publisher)
 {
     /**
      * Construtor de `Scene`.
@@ -26,6 +31,10 @@ export default class Scene extends scene_composition
     constructor(CANVAS_W, CANVAS_H, CANVAS_CTX, options)
     {
         super();
+        
+        this.canvas_w = CANVAS_W;
+        this.canvas_h = CANVAS_H;
+
 
         this.entity_ids = new Set();
         
@@ -39,54 +48,17 @@ export default class Scene extends scene_composition
             // ["physics", new PhysicsSystem()]
         ]);
 
-        /** Tile Map da cena. Armazena as instâncias de `TileMapLayer` da cena. É inicializado com um `TileMapLayer`.*/
-        this.tilemap = [new TileMapLayer(undefined, CANVAS_W, CANVAS_H, {})];
-
-        this.assetManager = new AssetManager();
+        // Gerenciador de camadas de gráficos na cena.
+        this.graphLayers = new GraphLayerManager();
 
         this.paused = false;
     }
 
 
 
-    /**
-     * Adiciona uma entidade composta ao conjunto de elementos no objeto do jogo.
-     * @param {String} name Nome referenciável do objeto.
-     * @param {ComposedClass} Composition Composição de classe base + mixins de propriedades.
-     * @param {...any} config Itens de configuração das propriedades dos mixins.
-     * @returns {Entity} Entidade adicionada à cena.
-     */
-    addComposedEntity(name, Composition, ...config)
+    createEntity(name, ...config)
     {
-        try
-        {
-            // Criar um objeto com a composição fornecida.
-            const entity = new Composition(name, config);
-
-            // DEPRECATED Isso vai contra o padrão ECS...
-            // Executa a rotina inicial do objeto composto (caso exista) e verifica se ele está adequado.
-            entity.runInitialRoutine();
-
-            // Adiciona objeto ao conjunto de entidades presentes na cena.
-            // FIXME Isso aqui precisa ser revisto.
-            this.entities.push(entity);
-
-            // FIXME Talvez pensar numa forma de não iterar por todos os sistemas a fim de registrar a entidade.
-            for(let [_, system] of this.systems){ system.register(entity); }
-
-            return entity;
-        }
-
-        catch(err)
-        {
-            if(name) console.error(`Não foi possível criar o objeto composto "${name}":\n`, err);
-            else console.error("Não foi possível criar o objeto composto:\n", err);
-        }
-    };
-
-
-    addComposedEntity1(name, ...config)
-    {
+        // Lança um erro caso haja a tentativa de criar uma entidade com um nome que já existe.
         if(this.entity_ids.has(name)){ throw new Error("Já existe uma entidade com esse identificador."); }
 
         // FIXME Isso aqui obviamente precisa de uma melhorada.
@@ -95,63 +67,141 @@ export default class Scene extends scene_composition
         // Top repetições dos animes...
         const entity_composition = composeEntity( Animatable, Cacheable, Controllable, Movable, PhysicalObject2D, Positional, Visible );
 
+        // Cria a instância da entidade.
         const entity = new entity_composition(name, ...config);
 
+        // Adiciona id da entidade à lista. Serve para acesso posterior.
         this.entity_ids.add(name);
-
-        // Atualmente sem utilidade.
-        // this.entities.push(entity);
 
         // Verifica o pertencimento da entidade nos sistemas registrados.
         for(let [_, system] of this.systems){ system.register(entity); }
 
+        // entity.subscribe()
+
         return entity;
     }
 
 
-    // FIXME Provisório.
+
+
     /**
-     * Cria uma polígono com dado número de lados.
-     * @param {*} n_sides Número de lados do polígono.
-     * @param  {...any} options
-     * @returns {Shape} Uma referência para o objeto que representa a forma. 
+     * @typedef {Object} Shape_config
+     * @property {number} n_sides Número de lados da forma.
+     * @property {number} radius Raio da forma.
+     * @property {number} width Largura da forma (opcional). Utiliza o raio, caso não especificado.
+     * @property {number} height Altura da forma (opcional). Utiliza o raio, caso não especificado.
+     * @property {string} color Cor da forma (opcional).
+     * @property {string} border_color Cor da borda da forma (opcional).
      */
-    createShapeEntity(n_sides, ...options)
+
+    /**
+     * @typedef {Object} Sprite_config
+     * @property {string} img_src Nome do arquivo de imagem. // FIXME (com extensão)
+     */
+
+    /**
+     * @overload
+     * @param {"Shape"} kind
+     * @param {Shape_config} config
+     * @returns {Shape}
+     */
+
+    /**
+     * @overload
+     * @param {"Sprite"} kind
+     * @param {Sprite_config} config
+     * @returns {Sprite}
+     */
+
+    /**
+     * Cria uma visualização para ser aplicada a uma entidade.
+     * @param {"Shape" | "Sprite"} kind 
+     * @param  {Shape_config | Sprite_config} config 
+     */
+    createView(kind, config)
     {
+        if(!kind) throw new Error("Uma string `kind` identificadora é obrigatória.");
+
+        if(kind == "Shape")         return this.createView_Shape(config);
+        else if(kind == "Sprite")   return this.createView_Sprite(config);
+
+        else throw Error("Especifique o tipo de visualização a ser criada.")
+    }
+
+
+    /**
+     * Cria uma view do tipo "Shape".
+     * @param  {object} config Configurações relacionadas à view.
+     * @returns {Shape}
+     */
+    createView_Shape(config)
+    {
+        const cx = config["cx"] ?? 0;
+        const cy = config["cy"] ?? 0;
+
+        const initial_a = config["a"] ?? 0;
+
+        const COLOR = config["color"] ?? undefined;
+        const BORDER_COLOR = config["border_color"] ?? undefined;
+
+        const n_sides = config["n_sides"] && config["n_sides"] > 2
+        ? config["n_sides"]
+        : 3;
+
         const TWO_PI = 2*Math.PI;
-        const angle = TWO_PI / Math.round(n_sides);
+        const step_angle = TWO_PI / Math.round(n_sides);
 
-        const r = options["r"] ?? 32;
+        // Raio da forma.
+        const r = config["radius"] ?? 1;
 
-        const points = [];
+        const width  =  config["width"]  ?? r; // Largura inicial da forma.
+        const height =  config["height"] ?? r; // Altura inicial da forma.
 
-        const width =   options["width"]  ?? r;
-        const height =  options["height"] ?? r;
-
-        for(let i = 1; i < n_sides; i++)
+        // Pontos dos vértices da forma.
+        const points = Array.from({ length: n_sides }, (_, index) =>
         {
-            const a = angle*i;
+            const a = initial_a + step_angle*index;
 
-            const x = angle + width  * Math.cos(a);
-            const y = angle + height * Math.sin(a);
+            const x = step_angle + width  * Math.cos(a);
+            const y = step_angle + height * Math.sin(a);
 
             // Adiciona o par ordenado do ponto à array de pontos.
-            points.push([x, y]);
-        }
+            return [cx+x, cy+y];
+        });
 
-        const entity_composition = composeEntity(Shape);
-
-        const entity = new entity_composition(points);
-
-        // Adiciona objeto ao conjunto de entidades presentes na cena.
-        // FIXME Isso aqui precisa ser revisto.
-        this.entities.push(entity);
-
-        // FIXME Talvez pensar numa forma de não iterar por todos os sistemas a fim de registrar a entidade.
-        for(let [_, system] of this.systems){ system.register(entity); }
-
-        return entity;
+        return new Shape( {color: COLOR, border_color: BORDER_COLOR, points} );
     }
+
+
+    /**
+     * Cria uma view do tipo "Sprite".
+     * @param  {object} config 
+     * @returns {Sprite}
+     */
+    createView_Sprite(...config)
+    {
+        const TEXTURE_SRC = config["img_src"] ?? undefined;
+
+        return new Sprite( {texture_src: TEXTURE_SRC} );
+    }
+
+
+    /**
+     * Atribui uma view a uma entidade.
+     * @param {Entity} entity `Entity` que receberá o atributo.
+     * @param {Shape | Sprite} view View a ser aplicada.
+     * @returns {void}
+     */
+    assignView(entity, view)
+    {
+        if(!entity.view) throw new Error("Não é possível assinalar uma propriedade `view` a uma entidade que não possui o comportamento `Visible`.");
+
+        // TODO Talvez, no futuro, criar um esquema de caching de visualizações, para acesso mais rápido à view anterior ao custo de memória.
+        entity.view = view;
+
+        entity.view_type = Object.getPrototypeOf(view).constructor.name;
+    }
+
 
 
     update(delta)
