@@ -28,10 +28,42 @@ export default class CanvasRenderer
      */
     cleanScreen(screen_width, screen_height){ this.ctx.clearRect(0, 0, screen_width, screen_height); }
 
+    // TODO Transferir responsabilidades dessa função.
     // TODO Documentar método.
-    drawImage(texture, x, y)
+    draw(entity)
     {
+        this.ctx.save();
+
+        // updateContext(); // TODO Eventualmente... 
+
+        if      (entity.cache.exists)            { this.drawFromCache(entity); }
+        else if (entity.view_type === "Sprite")  { this.drawSprite(entity);    }
+        else if (entity.view_type === "Shape")   { this.drawShape(entity);     }
+
+
+        // this.ctx.drawImage(texture, x, y);
+
+        this.ctx.restore();
+    }
+
+    // TODO Documentar método.
+    drawSprite(entity)
+    {
+        const texture = entity.texture;
         if(!texture) return;
-        this.ctx.drawImage(texture, x, y);
+    }
+
+    // TODO Documentar método.
+    // TODO Testar.
+    drawShape(entity)
+    {
+        const shape = entity.view;
+
+        this.ctx.beginPath();
+        
+        this.ctx.moveTo(...shape.points[0]);
+        shape.points.slice(1).forEach( point => { this.ctx.lineTo(...point); });
+        this.ctx.closePath();
+        this.ctx.stroke();
     }
 }
