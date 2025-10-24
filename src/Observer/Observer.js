@@ -18,27 +18,27 @@ const Observer = Base => class extends Base
     }
 
     
-    /**
-     * Registra um handler de evento no Observer.
-     * @param {String} event_type Tipo de evento.
-     * @param {Function} callback Função handler para o tipo de evento.
-     */
-    createHandler(event_type, callback)
-    {
-        this.handlers.set(event_type, callback);
-    }
+    // /**
+    //  * Registra um handler de evento no Observer.
+    //  * @param {String} event_type Tipo de evento.
+    //  * @param {Function} callback Função handler para o tipo de evento.
+    //  */
+    // createHandler(event_type, callback)
+    // {
+    //     this.handlers.set(event_type, callback);
+    // }
 
 
-    /**
-     * Função responsável por redirecionar cada tipo de notificação de evento disparada ao seu handler específico.
-     * @param {*} event_type Tipo de evento.
-     * @param {*} data Dados enviados para os handlers de evento.
-     */
-    handleEvent(event_type, data)
-    { 
-        if(this.handlers?.has(event_type)){ this.handlers.get(event_type)(data); }
-        else { throw new Error(`O handler para eventos do tipo ${event_type} não existe.`); }
-    }
+    // /**
+    //  * Função responsável por redirecionar cada tipo de notificação de evento disparada ao seu handler específico.
+    //  * @param {*} event_type Tipo de evento.
+    //  * @param {*} data Dados enviados para os handlers de evento.
+    //  */
+    // handleEvent(event_type, data)
+    // { 
+    //     if(this.handlers?.has(event_type)){ this.handlers.get(event_type)(data); }
+    //     else { throw new Error(`O handler para eventos do tipo ${event_type} não existe.`); }
+    // }
 };
 
 export default Observer;
