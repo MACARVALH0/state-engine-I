@@ -6,46 +6,51 @@ import Observer     from "./Observer/Observer.js";
 import Publisher    from "./Observer/Publisher.js";
 
 import { composeGeneric } from "./utils/compose.js";
+import EventBus from './EventBus.js';
+import World from './World.js';
+import RenderSystem from './systems/RenderSystem/RenderSystem.js';
 
-
-const game_composition = composeGeneric(Observer, Publisher);
 
 // TODO Documentar classe.
-export default class Game extends game_composition
+export default class Game // extends composeGeneric(Observer, Publisher);
 {
     /**
-     * 
+     *  Construtor da classe.
      * @param {Object} canvas
+     * @param {Object} config
      */
-    constructor(canvas)
+    constructor(canvas, config = {})
     {
-        super();
+        // super();
 
+        /** Gerenciador de assets do game. */
+        // this.assetManager = new AssetManager();
+
+        // Restrição de segurança.
         if(!(canvas instanceof HTMLCanvasElement)){ throw new Error("O argumento do construtor deve ser um elemento <canvas> do HTML. (HTMLCanvasElement"); }
 
         // Cache do canvas na instância de `Game`.
         this.canvas = canvas;
 
-        /** Largura do canvas. */
-        this.canvas_width = this.canvas.width;
+        /** Event bus central do game. */
+        this.event_bus = new EventBus();
 
-        /** Altura do canvas. */
-        this.canvas_height = this.canvas.height;
-
-        /** Gerenciador de assets do game. */
-        // this.assetManager = new AssetManager();
+        /** Abstração de World */
+        this.world = new World(this.event_bus);
+            this.world.addSystem( "render", new RenderSystem(config["renderer"] ?? 'canvas-renderer', this.canvas) ); // Adiciona o sistema de renderização.
 
         /** Gerenciador de cenas do game. */
-        this.sceneManager = new SceneManager();
-
-        /**
-         * Período transpassado desde o carregamento do contexto de `window`.
-         * Serve para o cálculo de tempo a cada atualização no contexto.
-         */
-        this.last_update = undefined;
+        this.sceneManager = new SceneManager(this.world);
 
         /** ID do laço de execuçãos. */
         this.loop_id = undefined;
+
+
+        /**
+         * Período transpassado desde o último carregamento do contexto de `window`.
+         * Serve para o cálculo de tempo a cada atualização no contexto.
+         */
+        this.last_update = undefined;
     }
 
 
@@ -64,9 +69,7 @@ export default class Game extends game_composition
         // Define a instância de `Scene` com as informações providenciadas.
         const scene = new Scene
         (
-            width ?? this.canvas_width,
-            height ?? this.canvas_height,
-            this.canvas,
+            this.world,
             options ?? {}
         );
 
@@ -74,13 +77,14 @@ export default class Game extends game_composition
             Espera notificação de:
             - Nova entidade criada;
         */
-        scene.eventManager.subscribe(this, "entity_created");
+        // scene.eventManager.subscribe(this, "entity_created");
 
 
         this.sceneManager.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
 
         return scene; // Retorna a instância de `Scene` criada.
     }
+
 
     /**
      * Define o caminho para os assets (arquivos estáticos) do jogo.
@@ -90,7 +94,6 @@ export default class Game extends game_composition
     defineAssetsPath(path)
     {
         if(!this.assetManager){ this.assetManager = AssetManager.create(path); }
-
         else return;
     }
 
@@ -103,6 +106,7 @@ export default class Game extends game_composition
         this.update = this.update.bind(this);
         requestAnimationFrame(this.update);
     }
+
 
     /**
      * Função callback que será executada em loop e armazenada como atributo na instância de game, para possibilidade futura de pausa.
@@ -121,6 +125,7 @@ export default class Game extends game_composition
         // // // ROTINA PRINCIPAL // // //
 
             // Atualizar cenas do `sceneManager`.
+            this.world.update(delta)
             this.sceneManager.update(delta);
 
         // // // // // // // // // // // //
