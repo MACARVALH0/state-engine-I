@@ -6,7 +6,7 @@ export default class EventManager
         this.listeners = new Map();
     }
 
-    
+
     /**
      * Inscreve o listener em um ou mais eventos de uma vez.
      * @param {Object} listener Observador dos eventos deste objeto.
@@ -42,5 +42,28 @@ export default class EventManager
         if(!this.listeners.has(event_type)) return;
 
         this.listeners.get(event_type).forEach( listener => listener.handleEvent(event_type, data) );
+    }
+
+
+    /**
+     * Registra um handler de evento no Observer.
+     * @param {String} event_type Tipo de evento.
+     * @param {Function} callback Função handler para o tipo de evento.
+     */
+    createHandler(event_type, callback)
+    {
+        this.handlers.set(event_type, callback);
+    }
+
+
+    /**
+     * Função responsável por redirecionar cada tipo de notificação de evento disparada ao seu handler específico.
+     * @param {*} event_type Tipo de evento.
+     * @param {*} data Dados enviados para os handlers de evento.
+     */
+    handleEvent(event_type, data)
+    { 
+        if(this.handlers?.has(event_type)){ this.handlers.get(event_type)(data); }
+        else { throw new Error(`O handler para eventos do tipo ${event_type} não existe.`); }
     }
 }
