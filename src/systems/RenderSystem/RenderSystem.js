@@ -1,8 +1,9 @@
 import CanvasRenderer from "../../renderer/CanvasRenderer.js";
+import EntitySystem from "../EntitySystem.js";
 
 
 // TODO Documentar classe.
-export default class RenderSystem
+export default class RenderSystem// extends EntitySystem
 {
     constructor(renderer_opt, canvas)
     {
@@ -18,17 +19,6 @@ export default class RenderSystem
 
     // TODO Pensar numa forma de atribuir a cada entidade sua respectiva função de desenho.
 
-    /**
-     * Retorna o renderer definido para o sistema de renderização.
-     * @param {String} opt Nome do renderer solicitado.
-     * @param {HTMLCanvasElement} canvas Elemento `<canvas>` que provê o `CanvasRenderingContext2D` da cena.
-     * @returns Objeto `{Renderer, ctx}`.
-     */
-    getRenderer(opt, canvas)
-    {
-        if(opt == 'canvas-renderer'){ return { Renderer: CanvasRenderer, ctx: canvas.getContext('2d') } }
-        // if(opt == 'outro-renderer'){}
-    }
 
     /** Registra uma `Entity` no sistema se a mesma cumprir com certos requisitos. */
     register(entity)
@@ -42,6 +32,20 @@ export default class RenderSystem
         )
         { this.entities.add(entity); }
     }
+
+
+    /**
+     * Retorna o renderer definido para o sistema de renderização.
+     * @param {String} opt Nome do renderer solicitado.
+     * @param {HTMLCanvasElement} canvas Elemento `<canvas>` que provê o `CanvasRenderingContext2D` da cena.
+     * @returns Objeto `{Renderer, ctx}`.
+     */
+    getRenderer(opt, canvas)
+    {
+        if(opt == 'canvas-renderer'){ return { Renderer: CanvasRenderer, ctx: canvas.getContext('2d') } }
+        // if(opt == 'outro-renderer'){}
+    }
+
 
     /**
      * Retorna o objeto `ImageData` do canvas, desde o `RenderSystem`.
