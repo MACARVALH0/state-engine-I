@@ -10,12 +10,14 @@ export default class World
 {
     constructor(event_bus)
     {
+        /** Instância de `EventBus` herdado de `Game`. */
         this.event_bus = event_bus;
+
+        /** Sistemas globais. */
         this.systems = new Map();
 
-        
-        /** Conjunto de entidades/objetos presentes na cena atual. */
-        this.entities = [];
+        /** Conjunto de entidades/objetos presentes em cada cena. */
+        this.entities = new Map();
 
         /** Lista de acesso rápido a ids de entidades. */
         this.entity_ids = new Set();
@@ -23,10 +25,7 @@ export default class World
 
 
     /** Injeta um sistema na instância de `World`. */
-    addSystem(name, system)
-    {
-        this.systems.set(name, system);
-    }
+    addSystem(name, system){ this.systems.set(name, system); }
 
 
     /** Atualiza a isntância de `World`. */
@@ -40,7 +39,7 @@ export default class World
 
 
     // TODO Documentar método.
-    createEntity(name, ...config)
+    createEntity(name, scene, config = {})
     {
         // Lança um erro caso haja a tentativa de criar uma entidade com um nome que já existe.
         if(this.entity_ids.has(name)){ throw new Error("Já existe uma entidade com esse identificador."); }
@@ -52,7 +51,10 @@ export default class World
         const entity_composition = composeEntity( Animatable, Cacheable, Controllable, Movable, PhysicalObject2D, Positional, Visible );
 
         // Cria a instância da entidade.
-        const entity = new entity_composition(name, ...config);
+        const entity = new entity_composition(name, config);
+
+        // Relaciona a entidade à cena à qual ela pertence.
+        this.entities.get(scene).push(entity);
 
         // Adiciona id da entidade à lista. Serve para acesso posterior.
         this.entity_ids.add(name);
