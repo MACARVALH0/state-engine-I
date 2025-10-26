@@ -61,29 +61,7 @@ export default class Game // extends composeGeneric(Observer, Publisher);
      * @param {Number} height Opcional. Valor de altura customizada para a nova cena. Caso não esteja presente, assume a altura do canvas.
      * @param {Object} options Objeto de configurações relacionadas à instância de `Scene` que será criada.
      */
-    createScene(width, height, options)
-    {
-        const MAX_SCENE_NUMBER = 16;
-        if(this.sceneManager.stack.length > MAX_SCENE_NUMBER) throw new Error("O número máximo de cenas foi excedido.");
-
-        // Define a instância de `Scene` com as informações providenciadas.
-        const scene = new Scene
-        (
-            this.world,
-            options ?? {}
-        );
-
-        /*
-            Espera notificação de:
-            - Nova entidade criada;
-        */
-        // scene.eventManager.subscribe(this, "entity_created");
-
-
-        this.sceneManager.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
-
-        return scene; // Retorna a instância de `Scene` criada.
-    }
+    createScene(options = {}){ return this.sceneManager.createScene(options); }
 
 
     /**
@@ -124,9 +102,8 @@ export default class Game // extends composeGeneric(Observer, Publisher);
 
         // // // ROTINA PRINCIPAL // // //
 
-            // Atualizar cenas do `sceneManager`.
             this.world.update(delta)
-            this.sceneManager.update(delta);
+            this.sceneManager.update(delta); // Atualizar cenas do `sceneManager`.
 
         // // // // // // // // // // // //
 
