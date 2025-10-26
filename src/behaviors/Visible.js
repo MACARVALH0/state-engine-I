@@ -21,7 +21,10 @@ const Visible = Base =>
             console.log("- Visible");
     
             this.is_visible = true;
-            
+
+            this.w = config["width"]  ?? 1;
+            this.h = config["height"] ?? 1;
+
             // Representação do tipo de abstração que será desenhada.
             this.view = {};
         }
