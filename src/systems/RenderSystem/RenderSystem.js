@@ -13,6 +13,9 @@ export default class RenderSystem// extends EntitySystem
         this.screen_width = canvas.width;
         this.screen_height = canvas.height;
 
+        /** Cache para referências de entidades que já passaram no teste de registro, porém cujo processamento foi pausado. */
+        this.entity_cache = new Map();
+
         /** Cache de entidades que compoem o sistema. */
         this.entities = new Set();
     }
@@ -20,11 +23,11 @@ export default class RenderSystem// extends EntitySystem
     // TODO Pensar numa forma de atribuir a cada entidade sua respectiva função de desenho.
 
 
-    /** Registra uma `Entity` no sistema se a mesma cumprir com certos requisitos. */
+    /** Registra uma instância `Entity` no sistema se a mesma cumprir com certos requisitos. */
     register(entity)
     {
         // Propriedades que devem ser encontradas na entidade para registrá-la no sistema.
-        const props = ['x', 'y'];
+        const props = ['x', 'y', 'w', 'h'];
         if
         (
             props.every( p => p in entity)
@@ -32,6 +35,51 @@ export default class RenderSystem// extends EntitySystem
         )
         { this.entities.add(entity); }
     }
+
+
+    /** Cancela o registro de uma ou mais entidades no sistema. */
+    unregister(...entities)
+    {
+        entities.forEach( entity =>
+        {
+            this.entities.delete(entity);
+        });
+    }
+
+
+    /**
+     * Pausa a renderização das entidades de uma determinada cena.
+     * @param {Scene} scene 
+     * @param  {...Entity} entities 
+     */
+    pause(scene, ...entities)
+    {
+        // Cache rápido de entidades pausadas.
+        const paused = this.entity_cache.get(scene) ?? [];
+
+        entities.forEach( entity =>
+        {
+            if(this.entities.delete(entity)) paused.push(entity);
+        });
+
+        this.entity_cache.set(scene, paused);
+    }
+
+
+    /**
+     * Restaura a renderização de uma determinada cena.
+     * @param {*} scene 
+     */
+    restore(scene)
+    {
+        if(!this.entity_cache.has(scene)){ console.log("Houve uma tentativa de recuperar uma cena que não existe."); return; }
+
+        this.entity_cache.get(scene).forEach( entity =>
+        {
+            this.entities.add(entity);
+        });
+    }
+
 
 
     /**
@@ -72,21 +120,4 @@ export default class RenderSystem// extends EntitySystem
         this.renderer.cleanScreen(this.screen_width, this.screen_height);
         for(let entity of this.entities){ this.draw(entity); }
     }
-
-    // TODO Documentar método.
-    // draw(texture, x,  y){ this.renderer.draw(texture, x, y); }
-
-    // /**
-    //  * Atualiza a cena com base em `delta`.
-    //  * @param {Number} delta Inteiro representando a quantidade de segundos passados entre um frame e outro.
-    //  */
-    // update(delta)
-    // {
-    //     this.renderer.cleanScreen(this.screen_width, this.screen_height);
-
-    //     for(let entity of this.entities)
-    //     {
-    //         this.draw(entity.texture, entity.x, entity.y);
-    //     }
-    // }
 }
