@@ -1,13 +1,51 @@
+import Scene from "./Scene";
+
 /**
  * Classe do objeto responsável pelo gerenciamento da abastração de cenas do jogo. 
  */
 export default class SceneManager
 {
-    constructor()
+    constructor(world)
     {
+        /** Número máximo de cenas consecutivas permitido. */
+        this.MAX_SCENE_NUMBER = 16;
+
         /** Pilha de cenas do gerenciador. */
         this.stack = [];
+
+        /** Instância de `World` herdado de `Game`. */
+        this.world = world;
     }
+
+    /**
+     * Cria uma nova cena.
+     * 
+     * @param {Number} width Opcional. Valor de largura customizada para a nova cena. Caso não esteja presente, assume a largura do canvas.
+     * @param {Number} height Opcional. Valor de altura customizada para a nova cena. Caso não esteja presente, assume a altura do canvas.
+     * @param {Object} options Objeto de configurações relacionadas à instância de `Scene` que será criada.
+     */
+    createScene(options)
+    {
+        if(this.stack.length > this.MAX_SCENE_NUMBER) throw new Error("O número máximo de cenas foi excedido.");
+
+        // Define a instância de `Scene` com as informações providenciadas.
+        const scene = new Scene (this.world);
+
+        // /*
+        //     Espera notificação de:
+        //     - Nova entidade criada;
+        // */
+        // // scene.eventManager.subscribe(this, "entity_created");
+
+
+        this.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
+
+        
+        this.world.entities.set(scene, []);
+
+        return scene; // Retorna a instância de `Scene` criada.
+    }
+
 
     /**
      * Adiciona uma cena à pilha gerenciada pelo `SceneManager`.
