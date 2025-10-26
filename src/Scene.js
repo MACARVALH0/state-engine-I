@@ -30,6 +30,7 @@ export default class Scene// extends composeGeneric(Observer, Publisher)
      */
     constructor(world)
     {
+        /** Instância de `World` herdado de `Game`. */
         this.world = world;
 
         // Gerenciador de camadas de gráficos na cena.
@@ -40,8 +41,8 @@ export default class Scene// extends composeGeneric(Observer, Publisher)
 
 
     // TODO Documentar método.
-    createEntity(name, ...config)
-    { return this.world.createEntity(name, config); }
+    createEntity(name, config = {})
+    { return this.world.createEntity(name, this, config); }
 
 
     /**
@@ -116,7 +117,11 @@ export default class Scene// extends composeGeneric(Observer, Publisher)
     };
 
     
-    pause(){ this.paused = true; };
+    pause()
+    {
+        this.paused = true;
+        
+    };
 
     resume(){ this.paused = false; };
 }
