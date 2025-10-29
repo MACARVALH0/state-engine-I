@@ -33,7 +33,8 @@ export default class World
     {
         this.systems.forEach((system) =>
         {
-            system.update(delta);
+            // TODO Remover essa verificação de encadeamento opcional.
+            system.update?.(delta);
         });
     };
 
@@ -60,7 +61,7 @@ export default class World
         this.entity_ids.add(name);
 
         // Verifica o pertencimento da entidade nos sistemas registrados.
-        for(let [_, system] of this.systems){ system.register(entity); }
+        for(let [_, system] of this.systems){ system?.register?.(entity); }
 
         // entity.subscribe()
 
