@@ -1,51 +1,62 @@
+import handleKeyboardInput from './handlers/kb_input.js';
+
 import AssetManager from './AssetManager/AssetManager.js';
 import SceneManager from "./SceneManager.js";
-import Scene        from "./Scene.js";
 
-import Observer     from "./Observer/Observer.js";
-import Publisher    from "./Observer/Publisher.js";
+import EventBus from './EventBus.js';
+import World from './World.js';
+import RenderSystem from './systems/RenderSystem/RenderSystem.js';
 
-import { composeGeneric } from "./utils/compose.js";
+import KeyboardInputSystem from './systems/InputSystem/KeyboardInput.js';
+import key_switch from './Keyboard.js';
 
-
-const game_composition = composeGeneric(Observer, Publisher);
 
 // TODO Documentar classe.
-export default class Game extends game_composition
+export default class Game
 {
     /**
-     * 
+     *  Construtor da classe.
      * @param {Object} canvas
+     * @param {Object} config
      */
-    constructor(canvas)
+    constructor(canvas, config = {})
     {
-        super();
 
+        /** Gerenciador de assets do game. */
+        // this.assetManager = new AssetManager();
+
+        // Restrição de segurança.
         if(!(canvas instanceof HTMLCanvasElement)){ throw new Error("O argumento do construtor deve ser um elemento <canvas> do HTML. (HTMLCanvasElement"); }
 
         // Cache do canvas na instância de `Game`.
         this.canvas = canvas;
 
-        /** Largura do canvas. */
-        this.canvas_width = this.canvas.width;
+        /** Event bus central do game. */
+        this.event_bus = new EventBus();
 
-        /** Altura do canvas. */
-        this.canvas_height = this.canvas.height;
+        /** Conjunto de switches de teclas ativas/desativadas. É um mapa no modelo {nome_da_tecla: string, está_ativo: boolean}. */
+        this.keyboard = new Map(key_switch);
 
-        /** Gerenciador de assets do game. */
-        // this.assetManager = new AssetManager();
+        /** Abstração de World */
+        this.world = new World(this.event_bus);
+            this.world.addSystem( "render", new RenderSystem(config["renderer"] ?? 'canvas-renderer', this.canvas) ); // Adiciona o sistema de renderização.
+            this.world.addSystem( "kb_input", new KeyboardInputSystem(this.event_bus) ); // Adiciona o sistema de inputs do teclado.
 
         /** Gerenciador de cenas do game. */
-        this.sceneManager = new SceneManager();
+        this.sceneManager = new SceneManager(this.world);
+
+        /** ID do laço de execuçãos. */
+        this.loop_id = undefined;
+
 
         /**
-         * Período transpassado desde o carregamento do contexto de `window`.
+         * Período transpassado desde o último carregamento do contexto de `window`.
          * Serve para o cálculo de tempo a cada atualização no contexto.
          */
         this.last_update = undefined;
 
-        /** ID do laço de execuçãos. */
-        this.loop_id = undefined;
+        // Posição provisória.
+        handleKeyboardInput(this, this.event_bus);
     }
 
 
@@ -56,31 +67,8 @@ export default class Game extends game_composition
      * @param {Number} height Opcional. Valor de altura customizada para a nova cena. Caso não esteja presente, assume a altura do canvas.
      * @param {Object} options Objeto de configurações relacionadas à instância de `Scene` que será criada.
      */
-    createScene(width, height, options)
-    {
-        const MAX_SCENE_NUMBER = 16;
-        if(this.sceneManager.stack.length > MAX_SCENE_NUMBER) throw new Error("O número máximo de cenas foi excedido.");
+    createScene(options = {}){ return this.sceneManager.createScene(options); }
 
-        // Define a instância de `Scene` com as informações providenciadas.
-        const scene = new Scene
-        (
-            width ?? this.canvas_width,
-            height ?? this.canvas_height,
-            this.canvas,
-            options ?? {}
-        );
-
-        /*
-            Espera notificação de:
-            - Nova entidade criada;
-        */
-        scene.eventManager.subscribe(this, "entity_created");
-
-
-        this.sceneManager.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
-
-        return scene; // Retorna a instância de `Scene` criada.
-    }
 
     /**
      * Define o caminho para os assets (arquivos estáticos) do jogo.
@@ -90,7 +78,6 @@ export default class Game extends game_composition
     defineAssetsPath(path)
     {
         if(!this.assetManager){ this.assetManager = AssetManager.create(path); }
-
         else return;
     }
 
@@ -103,6 +90,7 @@ export default class Game extends game_composition
         this.update = this.update.bind(this);
         requestAnimationFrame(this.update);
     }
+
 
     /**
      * Função callback que será executada em loop e armazenada como atributo na instância de game, para possibilidade futura de pausa.
@@ -120,8 +108,8 @@ export default class Game extends game_composition
 
         // // // ROTINA PRINCIPAL // // //
 
-            // Atualizar cenas do `sceneManager`.
-            this.sceneManager.update(delta);
+            this.world.update(delta)
+            this.sceneManager.update(delta); // Atualizar cenas do `sceneManager`.
 
         // // // // // // // // // // // //
 

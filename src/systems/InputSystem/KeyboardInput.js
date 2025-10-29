@@ -1,14 +1,33 @@
-import vkey from "./virtualKeyboardSetup.js";
+export default class KeyboardInputSystem
+{
+    constructor(eventBus)
+    {
+        this.eventBus = eventBus;
 
-const key_switch = Object.entries(vkey).map( ([_, code_string]) => [code_string, false] )
+        // TODO Eventualmente, se necessário, utilizar funções nomeadas para garantir a possibilidade de pausa do sistema.
+        window.addEventListener("keydown", e => this.handleInput(e, true));
+        window.addEventListener("keyup",   e => this.handleInput(e, false));
+    }
 
-/**
- * @type {Map<string, boolean>}
- */
-export default key_switch;
+    // TODO Documentar método.
+    handleInput(event, is_active)
+    {
+        // Evita um processamento avançado para eventos disparados sequencialmente com a tecla pressionada, por motivos de eficiência.
+        if(event.repeat) return;
 
+        /** Código da chave. */
+        const key_code = event.code;
+
+        // Emite evento de input da tecla.
+        this.eventBus.emit("key_input", {key_code, is_active});
+    }
+}
+
+
+// import vkey from "../../virtualKeyboardSetup.js"
 
 // import EventManager from "./Observer/EventManager.js";
+// import EntitySystem from "../EntitySystem.js";
 
 // /** Mapa de elementos tecla-boolean indicando se determinada tecla está ou não ativa. */
 // const key_switch = Object.entries(vkey).map( ([_, code_string]) => [code_string, false] )
@@ -24,14 +43,15 @@ export default key_switch;
 //     key_control.set(key_code, active);
 // }
 
-// class Keyboard
+// class KeyboardInputSystem
 // {
-//     constructor()
+//     constructor(eventBus)
 //     {
-//         this.eventManager = new EventManager();
+//         this.eventBus = eventBus;
+//         // this.eventManager = new EventManager();
 
-//         this.onKeyDown = e => { handleKeyboardInput(e, true); }
-//         this.onKeyUp = e => { handleKeyboardInput(e, false); }
+//         this.onKeyDown = e => { handleKeyboardInput(e, true);  }
+//         this.onKeyUp   = e => { handleKeyboardInput(e, false); }
 //     }
 
 

@@ -1,7 +1,7 @@
 import  Observer    from "./Observer/Observer.js";
 import  Publisher   from "./Observer/Publisher.js";
 import  Game        from "./Game.js";
-import  keyboard    from "./Keyboard.js";
+// import  keyboard    from "./Keyboard.js";
 
 import { composeGeneric } from "./utils/compose.js";
 
@@ -17,7 +17,7 @@ class State extends state_composition
         super();
 
         // INPUTS
-        this.keyboard = keyboard;
+        // this.keyboard = keyboard;
 
         this.game;
         this.sound;
@@ -40,9 +40,9 @@ class State extends state_composition
         try
         {
             /// Eventos do teclado ouvidos pelo game_obj.
-            this.keyboard.eventManager.subscribe(game_obj, "key_down", "key_up", "key_pressed");
+            // this.keyboard.eventManager.subscribe(game_obj, "key_down", "key_up", "key_pressed");
 
-            this.keyboard.startGlobalListener();
+            // this.keyboard.startGlobalListener();
 
 
         } catch (err)
@@ -66,7 +66,7 @@ export default new Proxy( new State(),
         
         if(attr == 'game')
         {
-            obj.keyboard.eventManager.unsubscribe(obj.game, "key_down", "key_up", "key_pressed");
+            // obj.keyboard.eventManager.unsubscribe(obj.game, "key_down", "key_up", "key_pressed");
             // throw new Error("Não é possível alterar a instância de `Game` dessa forma.");
         }
         
