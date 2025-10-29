@@ -1,18 +1,18 @@
+import handleKeyboardInput from './handlers/kb_input.js';
+
 import AssetManager from './AssetManager/AssetManager.js';
 import SceneManager from "./SceneManager.js";
-import Scene        from "./Scene.js";
 
-import Observer     from "./Observer/Observer.js";
-import Publisher    from "./Observer/Publisher.js";
-
-import { composeGeneric } from "./utils/compose.js";
 import EventBus from './EventBus.js';
 import World from './World.js';
 import RenderSystem from './systems/RenderSystem/RenderSystem.js';
 
+import KeyboardInputSystem from './systems/InputSystem/KeyboardInput.js';
+import key_switch from './Keyboard.js';
+
 
 // TODO Documentar classe.
-export default class Game // extends composeGeneric(Observer, Publisher);
+export default class Game
 {
     /**
      *  Construtor da classe.
@@ -21,7 +21,6 @@ export default class Game // extends composeGeneric(Observer, Publisher);
      */
     constructor(canvas, config = {})
     {
-        // super();
 
         /** Gerenciador de assets do game. */
         // this.assetManager = new AssetManager();
@@ -35,9 +34,13 @@ export default class Game // extends composeGeneric(Observer, Publisher);
         /** Event bus central do game. */
         this.event_bus = new EventBus();
 
+        /** Conjunto de switches de teclas ativas/desativadas. É um mapa no modelo {nome_da_tecla: string, está_ativo: boolean}. */
+        this.keyboard = new Map(key_switch);
+
         /** Abstração de World */
         this.world = new World(this.event_bus);
             this.world.addSystem( "render", new RenderSystem(config["renderer"] ?? 'canvas-renderer', this.canvas) ); // Adiciona o sistema de renderização.
+            this.world.addSystem( "kb_input", new KeyboardInputSystem(this.event_bus) ); // Adiciona o sistema de inputs do teclado.
 
         /** Gerenciador de cenas do game. */
         this.sceneManager = new SceneManager(this.world);
@@ -51,6 +54,9 @@ export default class Game // extends composeGeneric(Observer, Publisher);
          * Serve para o cálculo de tempo a cada atualização no contexto.
          */
         this.last_update = undefined;
+
+        // Posição provisória.
+        handleKeyboardInput(this, this.event_bus);
     }
 
 
