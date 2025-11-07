@@ -73,8 +73,8 @@ export function composeEntity(...mixins)
 
 	/** Lista de mixins na qual são adicionados outros valores arbitrários. */
 	const mixin_list = [...mixins];
-	mixin_list.push(Observer); // Propriedades de Observer.
-	mixin_list.push(Publisher); // Propriedades de Publisher.
+	// mixin_list.push(Observer); // Propriedades de Observer.
+	// mixin_list.push(Publisher); // Propriedades de Publisher.
 	// mixin_list.push(Entity); // Define a composição final com o corpo de uma Entity.
 
 	const Composed =  mixin_list.reduce( (acc, mixin) =>
@@ -87,7 +87,7 @@ export function composeEntity(...mixins)
 		return Mixin; // Retorna mixin estendido para próxima iteração da função redutora.
 		
 	}, Entity );
-	
+
 
 	// Adiciona ao protótipo da classe composta uma função que executa as funções de rotina inicial existentes em cada mixin.
 	Composed.prototype.runInitialRoutine = function()
