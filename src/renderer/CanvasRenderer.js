@@ -36,10 +36,11 @@ export default class CanvasRenderer
 
         // updateContext(); // TODO Eventualmente... 
 
-        if      (entity.cache.exists)            { this.drawFromCache(entity); }
-        else if (entity.view_type === "Sprite")  { this.drawSprite(entity);    }
-        else if (entity.view_type === "Shape")   { this.drawShape(entity);     }
+        if (entity.cache.exists) { this.drawFromCache(entity); }
+        else if (entity.view_type === "Sprite")     { this.drawSprite(entity);    }
+        else if (entity.view.view_type === "shape") { this.drawShape1(entity);     }
 
+        this.drawShape(entity);
 
         // this.ctx.drawImage(texture, x, y);
 
@@ -55,7 +56,7 @@ export default class CanvasRenderer
 
     // TODO Documentar método.
     // TODO Testar.
-    drawShape(entity)
+    drawShape1(entity)
     {
         const shape = entity.view;
 
@@ -63,6 +64,19 @@ export default class CanvasRenderer
         
         this.ctx.moveTo(...shape.points[0]);
         shape.points.slice(1).forEach( point => { this.ctx.lineTo(...point); });
+        this.ctx.closePath();
+        this.ctx.stroke();
+    }
+
+    drawShape(entity)
+    {
+        const points = entity.vertices;
+
+        // this.ctx.fillStyle = "rgba(255, 150, 200, .2)";
+        // this.ctx.fillRect(entity.x, entity.y, entity.width, entity.height)
+        this.ctx.beginPath();
+        this.ctx.moveTo(...points[0]);
+        points.slice(1).forEach( point => { this.ctx.lineTo(...point); });
         this.ctx.closePath();
         this.ctx.stroke();
     }
