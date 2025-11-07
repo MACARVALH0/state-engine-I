@@ -2,7 +2,7 @@
 import GraphLayerManager    from './GraphLayer/GraphLayerManager.js';
 
 // Systems
-import RenderSystem         from './systems/RenderSystem/RenderSystem.js';
+import RenderSystem         from './systems/RenderSystem.js';
 
 // Extensões de classe
 import Observer             from './Observer/Observer.js';
@@ -15,12 +15,13 @@ import Entity   from './Entity.js';
 import { composeEntity, composeGeneric } from "./utils/compose.js";
 
 import Sprite from './components/Sprite.js';
-import EventManager from './Observer/EventManager.js';
 
 
 // TODO Documentar classe.
 export default class Scene// extends composeGeneric(Observer, Publisher)
 {
+    #eventBus;
+
     /**
      * Construtor de `Scene`.
      * @param {Number} CANVAS_W Largura do canvas.
@@ -28,8 +29,10 @@ export default class Scene// extends composeGeneric(Observer, Publisher)
      * @param {CanvasRenderingContext2D} CANVAS_CTX Contexto do canvas.
      * @param {Object} options Objeto contendo configurações específicas para a cena.
      */
-    constructor(world)
+    constructor(eventBus, world)
     {
+        this.#eventBus = eventBus;
+
         /** Instância de `World` herdado de `Game`. */
         this.world = world;
 
@@ -45,70 +48,28 @@ export default class Scene// extends composeGeneric(Observer, Publisher)
     { return this.world.createEntity(name, this, config); }
 
 
+    // TODO Registrar evento para mais de uma tecla ao mesmo tempo via matriz de teclas.
     /**
-     * @typedef {Object} Shape_config
-     * @property {number} n_sides Número de lados da forma.
-     * @property {number} radius Raio da forma.
-     * @property {number} width Largura da forma (opcional). Utiliza o raio, caso não especificado.
-     * @property {number} height Altura da forma (opcional). Utiliza o raio, caso não especificado.
-     * @property {string} color Cor da forma (opcional).
-     * @property {string} border_color Cor da borda da forma (opcional).
+     * Cria um handler para determinada tecla pressionada.
+     * @param {*} key
+     * @param {*} callback
      */
+    onKeyPressed(key, callback)
+    {
+        if(typeof key != 'string') throw new Error("A chave de input deve ser descrita por uma string.");
 
-    /**
-     * @typedef {Object} Sprite_config
-     * @property {string} img_src Nome do arquivo de imagem. // FIXME (com extensão)
-     */
+        /** Contexto para o evento disparado. */
+        const context = {transform: this.world.getSystem("transform")};
 
-    /**
-     * @overload
-     * @param {"Shape"} kind
-     * @param {Shape_config} config
-     * @returns {Shape}
-     */
+        this.#eventBus.on("key_pressed", data =>
+        {
+            if(data.key_code !== key || !data.is_active) return;
 
-    /**
-     * @overload
-     * @param {"Sprite"} kind
-     * @param {Sprite_config} config
-     * @returns {Sprite}
-     */
+            callback(context);
+        });
 
-    /**
-     * Cria uma visualização para ser aplicada a uma entidade.
-     * @param {"Shape" | "Sprite"} kind 
-     * @param  {Shape_config | Sprite_config} config 
-     */
-    createView(kind, config = {})
-    { return this.world.createView(kind, config); }
-
-
-    /**
-     * Cria uma view do tipo "Shape".
-     * @param  {object} config Configurações relacionadas à view.
-     * @returns {Shape}
-     */
-    createView_Shape(config = {})
-    { return this.world.createView_Shape(config); }
-
-
-    /**
-     * Cria uma view do tipo "Sprite".
-     * @param  {object} config 
-     * @returns {Sprite}
-     */
-    createView_Sprite(config = {})
-    { return this.world.createView_Sprite(config); }
-
-
-    /**
-     * Atribui uma view a uma entidade.
-     * @param {Entity} entity `Entity` que receberá o atributo.
-     * @param {Shape | Sprite} view View a ser aplicada.
-     * @returns {void}
-     */
-    assignView(entity, view)
-    { return this.world.assignView(entity, view); }
+        return callback;
+    }
 
 
     update(delta)
