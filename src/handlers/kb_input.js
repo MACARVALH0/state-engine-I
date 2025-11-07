@@ -9,6 +9,9 @@ export default function handleKeyboardInput(game, event_bus)
         console.log(key_code, "->", is_active); // DEBUG
         
         // Define input `key_code` como ativo ou desativado.
-        game.keyboard.set(key_code, is_active);
+        game.keyboard_map.set(key_code, is_active);
+
+        if(is_active) game.active_keys.add(key_code);
+        else game.active_keys.delete(key_code);
     });
 }
