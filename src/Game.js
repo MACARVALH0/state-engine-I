@@ -5,10 +5,13 @@ import SceneManager from "./SceneManager.js";
 
 import EventBus from './EventBus.js';
 import World from './World.js';
-import RenderSystem from './systems/RenderSystem/RenderSystem.js';
+import RenderSystem from './systems/RenderSystem.js';
 
-import KeyboardInputSystem from './systems/InputSystem/KeyboardInput.js';
+import KeyboardInputService from './services/KeyboardInputService.js';
 import key_switch from './Keyboard.js';
+import emitInputService from './systems/InputSystem/emitInputService.js';
+import ShapeSystem from './systems/ShapeSystem.js';
+import TransformSystem from './systems/TransformSystem.js';
 
 
 // TODO Documentar classe.
@@ -35,15 +38,21 @@ export default class Game
         this.event_bus = new EventBus();
 
         /** Conjunto de switches de teclas ativas/desativadas. É um mapa no modelo {nome_da_tecla: string, está_ativo: boolean}. */
-        this.keyboard = new Map(key_switch);
+        this.keyboard_map = new Map(key_switch);
+
+        this.keyboard = new KeyboardInputService(this.event_bus);
+
+        this.active_keys = new Set();
 
         /** Abstração de World */
         this.world = new World(this.event_bus);
-            this.world.addSystem( "render", new RenderSystem(config["renderer"] ?? 'canvas-renderer', this.canvas) ); // Adiciona o sistema de renderização.
-            this.world.addSystem( "kb_input", new KeyboardInputSystem(this.event_bus) ); // Adiciona o sistema de inputs do teclado.
+            this.world.addSystem( "transform",  new TransformSystem(this.event_bus) ); // Sistema que lida com transformações de entidades.
+            this.world.addSystem( "shape",      new ShapeSystem(this.event_bus) ); // Adiciona o sistema de atualização de views do tipo "Shape".
+            this.world.addSystem( "render",     new RenderSystem(config["renderer"] ?? 'canvas-renderer', this.canvas) ); // Adiciona o sistema de renderização.
+            this.world.addSystem( "emit_input", new emitInputService(this.event_bus, this.active_keys, this.keyboard_map) ); // Sistema de emissão de eventos de teclas ativas.
 
         /** Gerenciador de cenas do game. */
-        this.sceneManager = new SceneManager(this.world);
+        this.sceneManager = new SceneManager(this.event_bus, this.world);
 
         /** ID do laço de execuçãos. */
         this.loop_id = undefined;
