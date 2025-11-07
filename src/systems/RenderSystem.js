@@ -1,5 +1,5 @@
-import CanvasRenderer from "../../renderer/CanvasRenderer.js";
-import EntitySystem from "../EntitySystem.js";
+import CanvasRenderer from "../renderer/CanvasRenderer.js";
+import EntitySystem from "./EntitySystem.js";
 
 
 // TODO Documentar classe.
@@ -30,7 +30,7 @@ export default class RenderSystem// extends EntitySystem
         const props = ['x', 'y', 'w', 'h'];
         if
         (
-            props.every( p => p in entity)
+            props.every( p => p in entity )
             && entity.is_visible
         )
         { this.entities.add(entity); }
@@ -49,6 +49,7 @@ export default class RenderSystem// extends EntitySystem
 
     /**
      * Pausa a renderização das entidades de uma determinada cena.
+     * Invocado pelo objeto de `Scene`.
      * @param {Scene} scene 
      * @param  {...Entity} entities 
      */
@@ -68,6 +69,7 @@ export default class RenderSystem// extends EntitySystem
 
     /**
      * Restaura a renderização de uma determinada cena.
+     * Invocado pelo objeto de `Scene`.
      * @param {*} scene 
      */
     restore(scene)
@@ -79,7 +81,6 @@ export default class RenderSystem// extends EntitySystem
             this.entities.add(entity);
         });
     }
-
 
 
     /**
