@@ -1,9 +1,9 @@
 // TODO Documentar classe.
 const SpriteSheet = Base => class extends Base
 {
-    constructor(...config)
+    constructor(name, config)
     {
-        super(...config);
+        super(name, config);
 
         this.sprites = new Map();
     }

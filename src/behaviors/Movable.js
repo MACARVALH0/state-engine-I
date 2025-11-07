@@ -9,9 +9,9 @@ const Movable = Base => class extends Base
         /**
      * @param {*} config Objeto com definições de propriedades físicas.
      */
-    constructor(...config)
+    constructor(name, config)
     {
-        super(...config);
+        super(name, config);
         console.log("- Movable");
     
         /* UP | RIGHT | DOWN | LEFT */

@@ -3,9 +3,9 @@
 // TODO Documentar mixin.
 const Cacheable = Base => class extends Base
 {
-    constructor(...config)
+    constructor(name, config)
     {
-        super(...config);
+        super(name, config);
 
         this.cache =
         {

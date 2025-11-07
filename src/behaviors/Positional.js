@@ -15,10 +15,10 @@ const Positional = Base =>
 
     return class extends Composition
     {
-        constructor(...config)
+        constructor(name, config)
         {
             // Construtor do behavior `Positional`.
-            super(...config);
+            super(name, config);
             console.log("- Positional");
         }
     }

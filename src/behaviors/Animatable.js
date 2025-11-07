@@ -4,9 +4,9 @@
  */
 const Animatable = Base => class extends Base
 {
-    constructor(...config)
+    constructor(name, config)
     {
-        super(...config);
+        super(name, config);
         console.log("- Animatable");
     }
 

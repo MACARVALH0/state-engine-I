@@ -15,7 +15,7 @@
 
 class Sprite
 {
-    constructor(...config)
+    constructor(config)
     {
         /** Sobrecarrega o tipo de renderização da entidade para "Sprite". */
         this.view_type = "sprite";

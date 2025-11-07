@@ -6,16 +6,16 @@ const PhysicalObject2D = Base => class extends Base
     /**
      * @param {*} config Objeto com definições de propriedades físicas.
      */
-    constructor(...config)
+    constructor(name, config)
     {
-        super(...config);
+        super(name, config);
         console.log("- PhysicalObject2D");
 
         /** Posição do objeto. */
         this.pos = {x: config['x'] ?? 0, y: config['y'] ?? 0};
         
         // Velocidade do objeto.
-        this.vel = {x: 0, y: 0};
+        // this.vel = {x: 0, y: 0};
 
         // Acceleration constants.
         this.acc_x = config['acc_x'] ?? 0;

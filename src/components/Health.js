@@ -1,9 +1,9 @@
 // TODO Documentar classe.
 const Health = Base => class extends Base
 {
-    constructor(...config)
+    constructor(name, config)
     {
-        super(...config);
+        super(name, config);
 
         this.hp = config["hp"] ?? 0b1;
         this.max_hp = config["max_hp"] ?? 0b100;

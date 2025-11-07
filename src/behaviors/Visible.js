@@ -1,5 +1,5 @@
-import Sprite from "../components/Sprite.js"
-import Shape from "../components/Shape.js";
+// import Sprite from "../components/Sprite.js"
+// import Shape from "../components/Shape.js";
 import { composeBehavior }  from "../utils/compose.js"
 
 /**
@@ -14,16 +14,13 @@ const Visible = Base =>
 
     return class extends Composition
     {
-        constructor(...config)
+        constructor(name, config)
         {
             // Construtor do behavior `Visible`.
-            super(...config);
+            super(name, config);
             console.log("- Visible");
     
             this.is_visible = true;
-
-            this.w = config["width"]  ?? 1;
-            this.h = config["height"] ?? 1;
 
             // Representação do tipo de abstração que será desenhada.
             this.view = {};

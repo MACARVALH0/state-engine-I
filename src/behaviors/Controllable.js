@@ -5,9 +5,9 @@
  */
 const Controllable = Base => class extends Base
 {
-    constructor(...config)
+    constructor(name, config)
     {
-        super(...config);
+        super(name, config);
         console.log("- Controllable.");
 
         this.is_controllable = true;
