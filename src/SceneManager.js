@@ -5,7 +5,10 @@ import Scene from "./Scene";
  */
 export default class SceneManager
 {
-    constructor(world)
+    #event_bus;
+    #world;
+    
+    constructor(event_bus, world)
     {
         /** Número máximo de cenas consecutivas permitido. */
         this.MAX_SCENE_NUMBER = 16;
@@ -13,8 +16,11 @@ export default class SceneManager
         /** Pilha de cenas do gerenciador. */
         this.stack = [];
 
-        /** Instância de `World` herdado de `Game`. */
-        this.world = world;
+        /** Referência para o `EventBus` herdado de `Game`. */
+        this.#event_bus = event_bus;
+
+        /** Referência de `World` herdada de `Game`. */
+        this.#world = world;
     }
 
     /**
@@ -29,7 +35,7 @@ export default class SceneManager
         if(this.stack.length > this.MAX_SCENE_NUMBER) throw new Error("O número máximo de cenas foi excedido.");
 
         // Define a instância de `Scene` com as informações providenciadas.
-        const scene = new Scene (this.world);
+        const scene = new Scene (this.#event_bus, this.#world);
 
         // /*
         //     Espera notificação de:
@@ -37,11 +43,10 @@ export default class SceneManager
         // */
         // // scene.eventManager.subscribe(this, "entity_created");
 
-
         this.push(scene); // Adiciona a cena ao `SceneManager` de `Game`.
 
         
-        this.world.entities.set(scene, []);
+        this.#world.entities.set(scene, []);
 
         return scene; // Retorna a instância de `Scene` criada.
     }
